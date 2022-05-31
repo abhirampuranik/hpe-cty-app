@@ -5,7 +5,7 @@ from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.preprocessing.sequence import TimeseriesGenerator
 
 class Rnn:
-    __init__():
+    def __init__():
         pass
 
     
