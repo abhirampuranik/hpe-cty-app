@@ -41,6 +41,10 @@ class AutoArima:
             prediction.columns = ['forecast']
             print(prediction)
             return prediction
+
+    def update(df):
+        with open('arima.pkl', 'rb') as pkl:
+            pickle.load(pkl).update(df)
     # prediction
     # plt.figure(figsize=(8,5))
     # plt.plot(train, label="Training")
