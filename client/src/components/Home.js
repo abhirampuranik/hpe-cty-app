@@ -18,17 +18,32 @@ export default function HomePage() {
 
     const handleOnChange = (e) => {
         setFile(e.target.files[0]);
+        const data = new FormData();
+
+        data.append('file', e.target.files[0]);
+        // data.append('filename', this.fileName.value);
+
+        fetch('http://localhost:5000/autoarima', {
+        method: 'POST',
+        body: data,
+        }).then((response) => {
+        response.json().then((body) => {
+            console.log("file went bruh")
+        });
+        });
+
+        
     };
 
     useEffect(()=>{
-        axios.get('http://localhost:5000/time').then(response => {
+        axios.get('http://127.0.0.1:5000/time').then(response => {
           console.log("SUCCESS", response)
           setGetMessage(response)
         }).catch(error => {
           console.log(error)
         })
 
-        axios.get('http://localhost:5000/hello').then(response => {
+        axios.get('http://127.0.0.1:5000/hello').then(response => {
           console.log("SUCCESS", response)
           setGetMessage1(response)
         }).catch(error => {
@@ -80,6 +95,33 @@ export default function HomePage() {
 
     }
 
+    const sendCSV = (e) => {
+        e.preventDefault();
+
+        // axios.post('http://127.0.0.1:5000/autoarima').then(response => {
+        //   console.log("SUCCESS", response)
+        //   setGetMessage(response)
+        // }).catch(error => {
+        //   console.log(error)
+        // })
+        let file1 = file;
+        const formData = new FormData();
+
+        formData.append("file", file1);
+
+        axios.post('http://127.0.0.1:5000/autoarima', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+        } )
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+    }
+
 
     return (
         <div>
@@ -120,6 +162,14 @@ export default function HomePage() {
                     }}
                 >
                     Plot
+                </button>
+
+                <button
+                    onClick={(e) => {
+                        sendCSV(e);
+                    }}
+                >
+                    Send file
                 </button>
 
 
