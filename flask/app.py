@@ -4,6 +4,7 @@ from urllib import request
 import pandas as pd
 from autoARIMA import AutoArima
 from ProphetAPI import ProphetClass
+from rnn import Rnn
 # from flask import Flask
 from flask import Flask, flash, request, redirect, url_for, session
 from werkzeug.utils import secure_filename
@@ -53,12 +54,10 @@ def prophet():
     return "preds"
 
 @app.route('/rnn',methods=['POST'])
-def prophet():
+def rnn():
     file = request.files['file'] 
     df = pd.read_csv(file)
-    df = ProphetClass.preprocess(df)
-    test = ProphetClass.train(df)
-    preds = ProphetClass.predict(test)
+    preds = Rnn(df)
     print(preds)
     response = preds
     return "preds"
