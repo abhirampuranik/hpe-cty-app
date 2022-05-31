@@ -1,4 +1,6 @@
 import pandas as pd
+import csv
+
 df=pd.DataFrame()
 
 df = pd.read_csv('../test_data/Increase.csv',index_col='Time',parse_dates=True)
@@ -102,3 +104,17 @@ print(test)
 # print('Mean Squared Error for Linear Regression Model is:',rmse_lr)
 # print('Mean Squared Error for Extreme_Gradient_Booster is:',rmse_xgb)
 # print('Mean Squared Error for Mulinomial_Naive_Bayes is:',rmse_multi)
+
+# temp = []
+
+test.to_csv('sujay.csv', encoding='utf-8')
+
+# header = ['Time', 'Usage','Usage_LastMonth', 'Usage_2monthsback','Usage_3monthsback', 'RandomForest','LinearReg','Extreme_Gradient_Booster', 'Mulinomial_Naive_Bayes']
+# with open('random.csv', 'w', encoding='UTF8') as f:
+#     writer = csv.writer(f)
+
+#     # write the header
+#     writer.writerow(header)
+
+#     # write the data
+#     writer.writerows(temp)

@@ -2,6 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import Chart from "react-google-charts";
 import axios from 'axios'
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+
+
 
 export default function HomePage() {
 
@@ -12,7 +19,7 @@ export default function HomePage() {
     const [getMessage1, setGetMessage1] = useState({})
     const [List,setList]=useState([]);
     
-
+    const [model, setModel] = React.useState('');
 
 
 
@@ -22,6 +29,12 @@ export default function HomePage() {
     const [List1,setList1]=useState([]);
 
     const fileReader = new FileReader();
+
+
+    const handleChangeOnModel = (event) => {
+        setModel(event.target.value);
+      };
+
 
     const handleOnChange = (e) => {
         setFile(e.target.files[0]);
@@ -103,15 +116,41 @@ export default function HomePage() {
 
         formData.append("file", file1);
 
-        axios.post('http://127.0.0.1:5000/autoarima', formData, {
+        if(model === 'autoarima'){
+            axios.post('http://127.0.0.1:5000/autoarima', formData, {
             headers: {
               'Content-Type': 'multipart/form-data'
             }
-        } )
-          .then(function (response) {
-            console.log(response.data);
-            setpredcsv(response.data);
-          })
+            } )
+            .then(function (response) {
+                console.log(response.data);
+                setpredcsv(response.data);
+            })
+        }else if(model === 'prophet'){
+            axios.post('http://127.0.0.1:5000/prophet', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+            } )
+            .then(function (response) {
+                console.log(response.data);
+                setpredcsv(response.data);
+            })
+        }else if(model === 'rnn'){
+            axios.post('http://127.0.0.1:5000/rnn', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+            } )
+            .then(function (response) {
+                console.log(response.data);
+                setpredcsv(response.data);
+            })
+        }else{
+            
+        }
+
+        
           
     }
 
@@ -150,6 +189,7 @@ export default function HomePage() {
                 :
                 <h3>LOADING</h3>}
             </div>
+
             <form>
                 <input
                     type={"file"}
@@ -169,6 +209,27 @@ export default function HomePage() {
                 &nbsp;
                
 
+                
+
+                <div style={{textAlign:"center", paddingLeft:900}}>
+                    <Box sx={{ width: 100 }}>
+                    <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">Age</InputLabel>
+                        <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={model}
+                        label="Model"
+                        onChange={handleChangeOnModel}
+                        >
+                        <MenuItem value={'autoarima'}>AutoArima</MenuItem>
+                        <MenuItem value={'prophet'}>Prophet</MenuItem>
+                        <MenuItem value={'rnn'}>RNN</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Box>
+                </div>
+
                 <button
                     onClick={(e) => {
                         sendCSV(e);
@@ -177,11 +238,16 @@ export default function HomePage() {
                     Send file
                 </button>
 
+                
+
 
                 
 
             </form>
+            
         </div>
+
+        
         
         <br/>
         <div style={{ alignContent: "center" }}>
