@@ -36,6 +36,7 @@ class AutoArima:
         return test
     
     def predict(test):
+        test_size = 50
         with open('arima.pkl', 'rb') as pkl:
             prediction = pd.DataFrame(pickle.load(pkl).predict(n_periods=test_size),index=test.index)
             prediction.columns = ['forecast']
@@ -43,12 +44,6 @@ class AutoArima:
             return prediction
 
     def update(df):
-        with open('arima.pkl', 'rb') as pkl:
-            pickle.load(pkl).update(df)
-    # prediction
-    # plt.figure(figsize=(8,5))
-    # plt.plot(train, label="Training")
-    # plt.plot(test,label="Test")
-    # plt.plot (prediction, label="Predicted")
-    # plt.legend (loc = "best")
-    # plt.show()
+        with open('arima.pkl', 'wb') as pkl:
+            arima_model = pickle.load(pkl).update(df)
+            pickle.dump(arima_model, pkl)
