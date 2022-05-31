@@ -40,7 +40,7 @@ def autoarima():
     preds = AutoArima.predict(test)
     print(preds)
     response=preds
-    return "preds"
+    return response.to_string()
 
 @app.route('/prophet',methods=['POST'])
 def prophet():
@@ -51,7 +51,7 @@ def prophet():
     preds = ProphetClass.predict(test)
     print(preds)
     response = preds
-    return "preds"
+    return response.to_string()
 
 @app.route('/rnn',methods=['POST'])
 def rnn():
@@ -60,5 +60,5 @@ def rnn():
     preds = Rnn(df)
     print(preds)
     response = preds
-    return "preds"
+    return response.to_string()
 

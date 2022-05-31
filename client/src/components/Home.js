@@ -7,30 +7,39 @@ export default function HomePage() {
 
     let valueList=[];
     const [file, setFile] = useState();
-    const [output, setoutput] = useState();
     const [outputArray, setoutputArray] = useState([]);
     const [getMessage, setGetMessage] = useState({})
     const [getMessage1, setGetMessage1] = useState({})
-
     const [List,setList]=useState([]);
+    
+
+
+
+
+
+    const [predcsv, setpredcsv] = useState("");
+    const [outputArray1, setoutputArray1] = useState([]);
+    const [List1,setList1]=useState([]);
 
     const fileReader = new FileReader();
 
     const handleOnChange = (e) => {
         setFile(e.target.files[0]);
-        const data = new FormData();
 
-        data.append('file', e.target.files[0]);
+        
+        // const data = new FormData();
+
+        // data.append('file', e.target.files[0]);
         // data.append('filename', this.fileName.value);
 
-        fetch('http://localhost:5000/autoarima', {
-        method: 'POST',
-        body: data,
-        }).then((response) => {
-        response.json().then((body) => {
-            console.log("file went bruh")
-        });
-        });
+        // fetch('http://localhost:5000/autoarima', {
+        // method: 'POST',
+        // body: data,
+        // }).then((response) => {
+        // response.json().then((body) => {
+        //     console.log("file went bruh")
+        // });
+        // });
 
         
     };
@@ -52,58 +61,43 @@ export default function HomePage() {
     
       }, [])
 
-    const handleOnSubmit = (e) => {
-        e.preventDefault();
 
+
+    const fun1 = () => {
         if (file) {
             fileReader.onload = function (event) {
                 const csvOutput = event.target.result;
-                setoutput(csvOutput.split('\n'));
+                // setoutput(csvOutput.split('\n'));
                 setoutputArray(csvOutput.split('\n'));
 
             };
 
             // setoutputArray(output);
-            fileReader.readAsText(file);
-
+            fileReader.readAsText(file)
+            
         }
+        
+    }
+
+    const handleOnSubmit = (e) => {
+        e.preventDefault();
+        
+        fun1();
+        
     };
 
-    const showCSV = (e) => {
-        e.preventDefault();
-        console.log(typeof(output))
-
-        for (let i = 0; i < output.length; i++) {
-            const ele = outputArray[i];
-            console.log(ele);
-        }
-        // console.log(output)
+    useEffect(() => {
         outputArray.map((record)=>(valueList.push([record.split(',')[0], record.split(',')[1]])));
         valueList.unshift([{ type: 'string', label: 'Time' },{label:'Storage Consumption',type:'number'}])
         setList(valueList);
         console.log(List)
+     }, [outputArray]);
 
-    }
-
-    const showState = (e) => {
-        e.preventDefault();
-        // for (let i = 0; i < output.length; i++) {
-        //     const ele = output[i];
-        //     console.log(ele);
-        // }
-        console.log(List);
-
-    }
 
     const sendCSV = (e) => {
         e.preventDefault();
 
-        // axios.post('http://127.0.0.1:5000/autoarima').then(response => {
-        //   console.log("SUCCESS", response)
-        //   setGetMessage(response)
-        // }).catch(error => {
-        //   console.log(error)
-        // })
+ 
         let file1 = file;
         const formData = new FormData();
 
@@ -115,13 +109,30 @@ export default function HomePage() {
             }
         } )
           .then(function (response) {
-            console.log(response);
+            console.log(response.data);
+            setpredcsv(response.data);
           })
-          .catch(function (error) {
-            console.log(error);
-          });
+          
     }
 
+    useEffect(() => {
+        // const fileReader1 = new FileReader();
+        console.log("pred value set aagide macha")
+
+        setoutputArray1(predcsv.split('\n'));
+
+        // fileReader1.readAsText(predcsv);
+     }, [predcsv]);
+
+
+    useEffect(() => {
+        let valueList1 = []
+        outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[1]])));
+        valueList1.unshift([{ type: 'string', label: 'Time' },{label:'Storage Consumption',type:'number'}])
+        setList1(valueList1);
+        
+    }, [outputArray1]);
+    
 
     return (
         <div>
@@ -152,17 +163,11 @@ export default function HomePage() {
                         handleOnSubmit(e);
                     }}
                 >
-                    IMPORT CSV
+                    Import CSV and Plot
                 </button>
 
                 &nbsp;
-                <button
-                    onClick={(e) => {
-                        showCSV(e);
-                    }}
-                >
-                    Plot
-                </button>
+               
 
                 <button
                     onClick={(e) => {
@@ -180,7 +185,7 @@ export default function HomePage() {
         
         <br/>
         <div style={{ alignContent: "center" }}>
-            {List.length!=0?
+            {outputArray.length!==0?
                 <Chart
                 width={'100%'}
                 height={'800px'}
@@ -188,6 +193,38 @@ export default function HomePage() {
                 loader={<div>Storage consumption Chart</div>}
                 data={
                 List
+                }
+                
+                options={{
+                    chartArea: {                        
+                        innerWidth:'90%',
+                        width: '90%'
+                      },
+                hAxis: {
+                    title: 'Time',
+                },
+                backgroundColor: {
+                    fill: '#c39ea0',//'#fbf6a7',
+                    fillOpacity: 0.8},
+                color:"white",
+                vAxis: {
+                    title: 'Storage consumption (in MB)',
+                }
+                }}
+                />:<span></span>}
+        </div>
+
+
+
+        <div style={{ alignContent: "center" }}>
+            {outputArray1.length!==0?
+                <Chart
+                width={'100%'}
+                height={'800px'}
+                chartType="LineChart"
+                loader={<div>Storage consumption Chart</div>}
+                data={
+                List1
                 }
                 
                 options={{
