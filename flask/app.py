@@ -3,6 +3,7 @@ import os
 from urllib import request
 import pandas as pd
 from autoARIMA import AutoArima
+from ProphetAPI import ProphetClass
 # from flask import Flask
 from flask import Flask, flash, request, redirect, url_for, session
 from werkzeug.utils import secure_filename
