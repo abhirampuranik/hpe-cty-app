@@ -39,3 +39,14 @@ def fileUpload():
     print(preds)
     response=preds
     return "preds"
+
+@app.route('/prophet',methods=['POST'])
+def fileUpload():
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    df = pd.read_csv(file)
+    df = ProphetClass.preprocess(df)
+    test = ProphetClass.train(df)
+    preds = ProphetClass.predict(test)
+    print(preds)
+    response = preds
