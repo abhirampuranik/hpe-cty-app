@@ -1,12 +1,12 @@
 import pandas as pd
 import numpy as np
-%matplotlib inline
 import matplotlib.pyplot as plt
 import csv
 import random
 import re
 import time
 from datetime import datetime, timedelta
+from pandas import to_datetime
 import matplotlib.pyplot as plt
 from matplotlib.style import use
 import numpy as np

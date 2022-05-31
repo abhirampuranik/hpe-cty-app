@@ -31,7 +31,7 @@ def hello_get():
     }
 
 @app.route('/autoarima',methods=['POST'])
-def fileUpload():
+def autoarima():
     file = request.files['file'] 
     df = pd.read_csv(file)
     df = AutoArima.preprocess(df)
@@ -42,12 +42,12 @@ def fileUpload():
     return "preds"
 
 @app.route('/prophet',methods=['POST'])
-def fileUpload():
+def prophet():
     file = request.files['file'] 
-    df = pd.read_csv(file)
     df = pd.read_csv(file)
     df = ProphetClass.preprocess(df)
     test = ProphetClass.train(df)
     preds = ProphetClass.predict(test)
     print(preds)
     response = preds
+    return "preds"
