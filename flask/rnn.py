@@ -64,6 +64,7 @@ for i in range(len(test)):
     current_batch = np.append(current_batch[:,1:,:],[[current_pred]],axis=1)
 
     # IGNORE WARNINGS
+true_predictions = scaler.inverse_transform(test_predictions)    
 test['Predictions'] = true_predictions
 from tensorflow.keras.callbacks import EarlyStopping
 
@@ -111,5 +112,5 @@ for i in range(len(test)):
 
 true_predictions = scaler.inverse_transform(test_predictions)
 test['LSTM Predictions'] = true_predictions
-
+print(test)
 test.plot(figsize=(12,8))
