@@ -5,6 +5,7 @@ import pandas as pd
 from autoARIMA import AutoArima
 from ProphetAPI import ProphetClass
 from rnn import Rnn
+from ML import MLModelsClass
 # from flask import Flask
 from flask import Flask, flash, request, redirect, url_for, session
 from werkzeug.utils import secure_filename
@@ -61,4 +62,13 @@ def rnn():
     print(preds)
     response = preds
     return response.to_string()
+
+@app.route('/MLModels',methods=['POST'])
+def MLModels():
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    preds = MLModelsClass(df)
+    print(preds)
+    response = preds
+    return response.to_string()    
 
