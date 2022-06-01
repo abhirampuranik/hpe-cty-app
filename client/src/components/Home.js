@@ -1,5 +1,5 @@
 // import { Home } from '@mui/icons-material';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, cloneElement } from 'react';
 import Chart from "react-google-charts";
 import axios from 'axios'
 import Box from '@mui/material/Box';
@@ -7,6 +7,8 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import { Input, Button  } from '@mui/material';
+import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 
 
 
@@ -22,7 +24,8 @@ export default function HomePage() {
     const [model, setModel] = React.useState('');
 
 
-
+    const [processed, setProcessed] = useState(false);
+    const [processing, setProcessing] = useState(false);
 
     const [predcsv, setpredcsv] = useState("");
     const [outputArray1, setoutputArray1] = useState([]);
@@ -71,6 +74,8 @@ export default function HomePage() {
         }).catch(error => {
           console.log(error)
         })
+
+        
     
       }, [])
 
@@ -103,12 +108,13 @@ export default function HomePage() {
         outputArray.map((record)=>(valueList.push([record.split(',')[0], record.split(',')[1]])));
         valueList.unshift([{ type: 'string', label: 'Time' },{label:'Storage Consumption',type:'number'}])
         setList(valueList);
-        console.log(List)
+        console.log("List values",valueList)
      }, [outputArray]);
 
 
     const sendCSV = (e) => {
         e.preventDefault();
+        setProcessing(true);
 
  
         let file1 = file;
@@ -125,6 +131,8 @@ export default function HomePage() {
             .then(function (response) {
                 console.log(response.data);
                 setpredcsv(response.data);
+                setProcessing(false);
+                setProcessed(true);
             })
         }else if(model === 'prophet'){
             axios.post('http://127.0.0.1:5000/prophet', formData, {
@@ -135,6 +143,8 @@ export default function HomePage() {
             .then(function (response) {
                 console.log(response.data);
                 setpredcsv(response.data);
+                setProcessing(false);
+                setProcessed(true);
             })
         }else if(model === 'rnn'){
             axios.post('http://127.0.0.1:5000/rnn', formData, {
@@ -145,9 +155,24 @@ export default function HomePage() {
             .then(function (response) {
                 console.log(response.data);
                 setpredcsv(response.data);
+                setProcessing(false);
+                setProcessed(true);
             })
+        }else if(model === 'mlmodels'){
+            axios.post('http://127.0.0.1:5000/mlmodels', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+            } )
+            .then(function (response) {
+                console.log(response.data);
+                setpredcsv(response.data);
+                setProcessing(false);
+                setProcessed(true);
+            })
+
         }else{
-            
+
         }
 
         
@@ -166,24 +191,49 @@ export default function HomePage() {
 
     useEffect(() => {
         let valueList1 = []
-        outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[1]])));
-        valueList1.unshift([{ type: 'string', label: 'Time' },{label:'Storage Consumption',type:'number'}])
-        setList1(valueList1);
+
+
+        if(model === 'autoarima'){
+            outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[1]])));
+            // outputArray1.map((record)=>(valueList1.push([record.split('  ')[0], record.split('  ')[1].split(',')[0]])));
+            valueList1.unshift([{ type: 'string', label: 'Time' },{label:'Forecast',type:'number'}])
+            setList1(valueList1);
+            console.log("output array1 from flask", outputArray1)
+            console.log("value list 1",valueList1)
+
+        }else if(model === 'rnn'){
+            outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[2], record.split(',')[3]])));
+            // outputArray1.map((record)=>(valueList1.push([record.split('  ')[0], record.split('  ')[1].split(',')[0]])));
+            valueList1.unshift([{ type: 'string', label: 'Time' },{label:'Forecast_rnn',type:'number'},{label:'Forecast_lstm',type:'number'}])
+            setList1(valueList1);
+            console.log("output array1 from flask", outputArray1)
+            console.log("value list 1",valueList1)
+
+        }else if(model === 'prophet'){
+
+
+        }else if(model === 'mlmodels'){
+            outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[5], record.split(',')[6],record.split(',')[7],record.split(',')[8]])));
+            // outputArray1.map((record)=>(valueList1.push([record.split('  ')[0], record.split('  ')[1].split(',')[0]])));
+            valueList1.unshift([{ type: 'string', label: 'Time' },{label:'Forecast_Random_forest',type:'number'},{label:'Forecast_LR',type:'number'},{label:'Forecast_Extreme_gradient_descent',type:'number'},{label:'Forecast_MNB',type:'number'}])
+            setList1(valueList1);
+            console.log("output array1 from flask", outputArray1)
+            console.log("value list 1",valueList1)
+        }else{
+
+        }
+        
         
     }, [outputArray1]);
     
 
     return (
-        <div>
+        <div style={{ textAlign: "center", alignContent:"center", alignItems:"center" }}>
           
 
-        <div style={{ textAlign: "center" }}>
-            <h1>Current usage 1 </h1>
-            <div>{getMessage.status === 200 ? 
-                <h3>{getMessage.data.message}</h3>
-                :
-                <h3>LOADING</h3>}
-            </div>
+        <div style={{ textAlign: "center" , alignContent:'center'}}>
+            <h1>Upload your data</h1>
+            
             <div>{getMessage1.status === 200 ? 
                 <h3>{getMessage1.data.message}</h3>
                 :
@@ -191,30 +241,44 @@ export default function HomePage() {
             </div>
 
             <form>
-                <input
+                {/* <input
                     type={"file"}
                     id={"csvFileInput"}
                     accept={".csv"}
                     onChange={handleOnChange}
-                />
+                /> */}
+                <Input 
+                    type='file'
+                    id='csvFileInput'
+                    onChange={handleOnChange}
 
-                <button
+                />
+                &nbsp;&nbsp;
+                <Button variant="contained"
+                    onClick={(e) => {
+                        handleOnSubmit(e);
+                    }}
+                    >Import CSV and Plot</Button>
+
+                {/* <button
                     onClick={(e) => {
                         handleOnSubmit(e);
                     }}
                 >
                     Import CSV and Plot
-                </button>
+                </button> */}
 
                 &nbsp;
                
 
-                
+                <br/>
+                <br/>
 
-                <div style={{textAlign:"center", paddingLeft:900}}>
-                    <Box sx={{ width: 100 }}>
+                
+                <div style={{alignItems:'center',justifyContent:'center', width:250, margin:'0px auto'}}>
+                    <Box justify = "center">
                     <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">Age</InputLabel>
+                        <InputLabel id="demo-simple-select-label">Select Model</InputLabel>
                         <Select
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
@@ -225,24 +289,27 @@ export default function HomePage() {
                         <MenuItem value={'autoarima'}>AutoArima</MenuItem>
                         <MenuItem value={'prophet'}>Prophet</MenuItem>
                         <MenuItem value={'rnn'}>RNN</MenuItem>
+                        <MenuItem value={'mlmodels'}>ML Models</MenuItem>
                         </Select>
                     </FormControl>
-                </Box>
+                    </Box>
                 </div>
+                <br/>
 
-                <button
+                <Button variant="contained"
+                    onClick={(e) => {
+                        sendCSV(e);
+                    }}
+                    >Send File</Button>
+
+
+                {/* <button
                     onClick={(e) => {
                         sendCSV(e);
                     }}
                 >
                     Send file
-                </button>
-
-                
-
-
-                
-
+                </button> */}
             </form>
             
         </div>
@@ -250,8 +317,10 @@ export default function HomePage() {
         
         
         <br/>
-        <div style={{ alignContent: "center" }}>
+        <div style={{ alignContent: "center", width: '95%', margin:'auto'}}>
             {outputArray.length!==0?
+                <div>
+                <h3>Plot</h3>
                 <Chart
                 width={'100%'}
                 height={'800px'}
@@ -263,8 +332,8 @@ export default function HomePage() {
                 
                 options={{
                     chartArea: {                        
-                        innerWidth:'90%',
-                        width: '90%'
+                        innerWidth:'80%',
+                        width: '70%'
                       },
                 hAxis: {
                     title: 'Time',
@@ -277,42 +346,47 @@ export default function HomePage() {
                     title: 'Storage consumption (in MB)',
                 }
                 }}
-                />:<span></span>}
+                /></div>:<span></span>}
         </div>
 
+        <br/>
+        {processed?<div><h1>Predictions</h1></div>:<span></span>}
+        {processing? <div><h1>Processing</h1><HourglassTopIcon/></div>:<span></span>}
+        
+        
 
-
-        <div style={{ alignContent: "center" }}>
-            {outputArray1.length!==0?
+        <div style={{ alignContent: "center", width: '95%', margin:'auto' }}>
+            {processed?
                 <Chart
                 width={'100%'}
                 height={'800px'}
                 chartType="LineChart"
                 loader={<div>Storage consumption Chart</div>}
                 data={
-                List1
+                  List1
                 }
+                // data={
+                //     [["Age", "Weight","pred"], [1,2,2],[3,4,5],[4,3,6],[5,6,8],[7,8,10]]
+                // }
                 
                 options={{
                     chartArea: {                        
                         innerWidth:'90%',
-                        width: '90%'
+                        width: '70%'
                       },
                 hAxis: {
                     title: 'Time',
                 },
                 backgroundColor: {
-                    fill: '#c39ea0',//'#fbf6a7',
+                    fill: '#fbf6a7',//'#fbf6a7',#c39ea0
                     fillOpacity: 0.8},
                 color:"white",
                 vAxis: {
-                    title: 'Storage consumption (in MB)',
+                    title: 'Storage Forecast consumption (in MB)',
                 }
                 }}
                 />:<span></span>}
         </div>
-
-
           
         </div>
       );

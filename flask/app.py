@@ -3,10 +3,9 @@ import os
 from urllib import request
 import pandas as pd
 from autoARIMA import AutoArima
-from ProphetAPI import ProphetClass
+# from ProphetAPI import ProphetClass
 from rnn import Rnn
 from ML import MLModelsClass
-# from flask import Flask
 from flask import Flask, flash, request, redirect, url_for, session
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
@@ -29,7 +28,7 @@ def get_current_time():
 def hello_get():
     return{
         'resultStatus': 'SUCCESS',
-        'message': 'Hello boi'
+        'message': 'Flask Running'
     }
 
 @app.route('/autoarima',methods=['POST'])
@@ -41,7 +40,7 @@ def autoarima():
     preds = AutoArima.predict(test)
     print(preds)
     response=preds
-    return response.to_string()
+    return response.to_csv()
     # return 'autoarima'
 
 @app.route('/prophet',methods=['POST'])
@@ -53,25 +52,25 @@ def prophet():
     # preds = ProphetClass.predict(test)
     # print(preds)
     # response = preds
-    # return response.to_string()
+    # return response.to_csv()
     return 'prophet'
 
 @app.route('/rnn',methods=['POST'])
 def rnn():
-    # file = request.files['file'] 
-    # df = pd.read_csv(file)
-    # preds = Rnn(df)
-    # print(preds)
-    # response = preds
-    # return response.to_string()
-    return "rnn"
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    preds = Rnn.model(df)
+    print(preds)
+    response = preds
+    return response.to_csv()
+    # return "rnn"
 
-@app.route('/MLModels',methods=['POST'])
+@app.route('/mlmodels',methods=['POST'])
 def MLModels():
     file = request.files['file'] 
     df = pd.read_csv(file)
-    preds = MLModelsClass(df)
+    preds = MLModelsClass.model(df)
     print(preds)
     response = preds
-    return response.to_string()    
+    return response.to_csv()    
 

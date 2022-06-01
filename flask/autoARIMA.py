@@ -10,9 +10,13 @@ class AutoArima:
     
     def preprocess(df):
         dataset = df
-        df_User1 = dataset[dataset['UserID']==1]
-        df_User1.index = df_User1['Time']
-        df = df_User1.drop(['Time','UserID'],axis=1)
+        # df_User1 = dataset[dataset['UserID']==1]
+        # df_User1.index = df_User1['Time']
+        # df = df_User1.drop(['Time','UserID'],axis=1)
+        
+        # df_User1 = dataset[dataset['UserID']==1]
+        dataset.index = dataset['Time']
+        df = dataset.drop(['Time'],axis=1)
         print(df)
         return df
 

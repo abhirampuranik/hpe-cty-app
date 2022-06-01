@@ -1,10 +1,4 @@
 import pandas as pd
-<<<<<<< HEAD
-import csv
-
-df=pd.DataFrame()
-=======
->>>>>>> be9de1de86c84d49c77be3ffeef6eb8863493230
 
 class MLModelsClass:
     def __init__():
@@ -12,10 +6,12 @@ class MLModelsClass:
 
     def model(dataset):
 # df=pd.DataFrame()
-        df = pd.read_csv(dataset,index_col='Time',parse_dates=True)
+        # df = pd.read_csv(dataset,index_col='Time',parse_dates=True)
+        df = dataset 
+        df.index = df['Time']
         df.index.freq = 'MS'
         #df.tail()
-        df.columns = ['Usage']
+        # df.columns = ['Usage']
         df.plot(figsize=(12,8))
 
         df['Usage_LastMonth']=df['Usage'].shift(+1)
@@ -100,14 +96,3 @@ class MLModelsClass:
         # plt.show()
 
         return test
-        # from sklearn.metrics import mean_squared_error
-        # from math import sqrt
-        # rmse_rf=sqrt(mean_squared_error(pred,y_test))
-        # rmse_lr=sqrt(mean_squared_error(lin_pred,y_test))
-        # rmse_xgb=sqrt(mean_squared_error(xgb_pred,y_test))
-        # rmse_multi=sqrt(mean_squared_error(multi_pred,y_test))
-
-        # print('Mean Squared Error for Random Forest Model is:',rmse_rf)
-        # print('Mean Squared Error for Linear Regression Model is:',rmse_lr)
-        # print('Mean Squared Error for Extreme_Gradient_Booster is:',rmse_xgb)
-        # print('Mean Squared Error for Mulinomial_Naive_Bayes is:',rmse_multi)
