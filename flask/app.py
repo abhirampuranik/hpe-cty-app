@@ -3,9 +3,9 @@ import os
 from urllib import request
 import pandas as pd
 from autoARIMA import AutoArima
-# from ProphetAPI import ProphetClass
-from rnn import Rnn
-from ML import MLModelsClass
+from ProphetAPI import ProphetClass
+# from rnn import Rnn
+# from ML import MLModelsClass
 from flask import Flask, flash, request, redirect, url_for, session
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
@@ -45,15 +45,15 @@ def autoarima():
 
 @app.route('/prophet',methods=['POST'])
 def prophet():
-    # file = request.files['file'] 
-    # df = pd.read_csv(file)
-    # df = ProphetClass.preprocess(df)
-    # test = ProphetClass.train(df)
-    # preds = ProphetClass.predict(test)
-    # print(preds)
-    # response = preds
-    # return response.to_csv()
-    return 'prophet'
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    df = ProphetClass.preprocess(df)
+    test = ProphetClass.train(df)
+    preds = ProphetClass.predict(test)
+    print(preds)
+    response = preds
+    return response.to_csv()
+    # return 'prophet'
 
 @app.route('/rnn',methods=['POST'])
 def rnn():
