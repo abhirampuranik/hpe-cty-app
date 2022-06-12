@@ -9,7 +9,10 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { Input, Button  } from '@mui/material';
 import HourglassTopIcon from '@mui/icons-material/HourglassTop';
-
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormLabel from "@mui/material/FormLabel";
 
 
 export default function HomePage() {
@@ -21,9 +24,9 @@ export default function HomePage() {
     const [getMessage1, setGetMessage1] = useState({})
     const [List,setList]=useState([]);
     
-    const [model, setModel] = React.useState('');
+    const [model, setModel] = useState('');
     
-
+    const [action, setAction] = useState('train');
 
     const [processed, setProcessed] = useState(false);
     const [processing, setProcessing] = useState(false);
@@ -109,6 +112,10 @@ export default function HomePage() {
         
     };
 
+    const handleChangeAction = (event) => {
+        setAction(event.target.value);
+      };
+
     useEffect(() => {
         outputArray.map((record)=>(valueList.push([record.split(',')[0], record.split(',')[1]])));
         valueList.unshift([{ type: 'string', label: 'Time' },{label:'Storage Consumption',type:'number'}])
@@ -189,7 +196,8 @@ export default function HomePage() {
         setoutputArray1(predcsv.split('\n'));
 
         // fileReader1.readAsText(predcsv);
-     }, [predcsv]);
+    }, [predcsv]);
+
 
 
     useEffect(() => {
@@ -247,12 +255,7 @@ export default function HomePage() {
             
 
             <form>
-                {/* <input
-                    type={"file"}
-                    id={"csvFileInput"}
-                    accept={".csv"}
-                    onChange={handleOnChange}
-                /> */}
+
                 <Input 
                     type='file'
                     id='csvFileInput'
@@ -266,13 +269,7 @@ export default function HomePage() {
                     }}
                     >Import CSV and Plot</Button>
 
-                {/* <button
-                    onClick={(e) => {
-                        handleOnSubmit(e);
-                    }}
-                >
-                    Import CSV and Plot
-                </button> */}
+
 
                 &nbsp;
                
@@ -299,9 +296,28 @@ export default function HomePage() {
                         </Select>
                     </FormControl>
                     </Box>
-                    
                 </div>
+                    
+                <br/>
                 
+
+                <FormControl>
+                    <FormLabel id="demo-row-radio-buttons-group-label">Action</FormLabel>
+                    <RadioGroup
+                        row
+                        aria-labelledby="demo-row-radio-buttons-group-label"
+                        name="row-radio-buttons-group"
+                        value={action}
+                        onChange={handleChangeAction}
+                    >
+                        <FormControlLabel value="train" control={<Radio />} label="Train" />
+                        <FormControlLabel value="predict" control={<Radio />} label="Predict" />
+
+                    </RadioGroup>
+                </FormControl>
+                
+                
+                <br/>
 
                 <Button variant="contained"
                     onClick={(e) => {
