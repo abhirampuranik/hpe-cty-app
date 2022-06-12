@@ -4,6 +4,7 @@ from urllib import request
 import pandas as pd
 from autoARIMA import AutoArima
 from ProphetAPI import ProphetClass
+from dateGen import DateGen
 # from rnn import Rnn
 # from ML import MLModelsClass
 from flask import Flask, flash, request, redirect, url_for, session
@@ -32,7 +33,7 @@ def hello_get():
     }
 
 @app.route('/autoarima/train',methods=['POST'])
-def autoarima():
+def autoarima_train():
     file = request.files['file'] 
     df = pd.read_csv(file)
     df = AutoArima.preprocess(df)
@@ -43,7 +44,7 @@ def autoarima():
     return response.to_csv()
 
 @app.route('/autoarima/update',methods=['POST'])
-def autoarima():
+def autoarima_update():
     file = request.files['file'] 
     df = pd.read_csv(file)
     df = AutoArima.preprocess(df)
@@ -51,7 +52,7 @@ def autoarima():
     return "Updated Model Successfully"
 
 @app.route('/autoarima/predict',methods=['POST'])
-def autoarima():
+def autoarima_predict():
     file = request.files['file'] 
     df = pd.read_csv(file)
     df = AutoArima.preprocess(df)
@@ -91,3 +92,8 @@ def MLModels():
     response = preds
     return response.to_csv()    
 
+@app.route('/dateGen',methods=['GET'])
+def dategenerator():
+    df = DateGen.date_df(5,1)
+    response = df
+    return response.to_csv()
