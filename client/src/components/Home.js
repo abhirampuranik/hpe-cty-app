@@ -22,6 +22,7 @@ export default function HomePage() {
     const [List,setList]=useState([]);
     
     const [model, setModel] = React.useState('');
+    const [storage, setStorage] = useState('');
 
 
     const [processed, setProcessed] = useState(false);
@@ -31,11 +32,18 @@ export default function HomePage() {
     const [outputArray1, setoutputArray1] = useState([]);
     const [List1,setList1]=useState([]);
 
+    const [ListStorage,setListStorage]=useState([]);
+
+
     const fileReader = new FileReader();
 
 
     const handleChangeOnModel = (event) => {
         setModel(event.target.value);
+      };
+
+      const handleChangeOnStorage = (event) => {
+        setStorage(event.target.value);
       };
 
 
@@ -69,6 +77,14 @@ export default function HomePage() {
         })
 
         axios.get('http://127.0.0.1:5000/hello').then(response => {
+          console.log("SUCCESS", response)
+          setGetMessage1(response)
+        }).catch(error => {
+          console.log(error)
+        })
+
+
+        axios.get('http://127.0.0.1:5000/liststorages').then(response => {
           console.log("SUCCESS", response)
           setGetMessage1(response)
         }).catch(error => {
@@ -123,7 +139,7 @@ export default function HomePage() {
         formData.append("file", file1);
 
         if(model === 'autoarima'){
-            axios.post('http://127.0.0.1:5000/autoarima', formData, {
+            axios.post('http://127.0.0.1:5000/autoarima/update', formData, {
             headers: {
               'Content-Type': 'multipart/form-data'
             }
@@ -202,9 +218,9 @@ export default function HomePage() {
             console.log("value list 1",valueList1)
 
         }else if(model === 'rnn'){
-            outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[2], record.split(',')[3]])));
+            outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[1], record.split(',')[2], record.split(',')[3]])));
             // outputArray1.map((record)=>(valueList1.push([record.split('  ')[0], record.split('  ')[1].split(',')[0]])));
-            valueList1.unshift([{ type: 'string', label: 'Time' },{label:'Forecast_rnn',type:'number'},{label:'Forecast_lstm',type:'number'}])
+            valueList1.unshift([{ type: 'string', label: 'Time' },{label:'Usage',type:'number'},{label:'Forecast_rnn',type:'number'},{label:'Forecast_lstm',type:'number'}])
             setList1(valueList1);
             console.log("output array1 from flask", outputArray1)
             console.log("value list 1",valueList1)
@@ -213,9 +229,9 @@ export default function HomePage() {
 
 
         }else if(model === 'mlmodels'){
-            outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[5], record.split(',')[6],record.split(',')[7],record.split(',')[8]])));
+            outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[2],record.split(',')[5], record.split(',')[6],record.split(',')[7],record.split(',')[8]])));
             // outputArray1.map((record)=>(valueList1.push([record.split('  ')[0], record.split('  ')[1].split(',')[0]])));
-            valueList1.unshift([{ type: 'string', label: 'Time' },{label:'Forecast_Random_forest',type:'number'},{label:'Forecast_LR',type:'number'},{label:'Forecast_Extreme_gradient_descent',type:'number'},{label:'Forecast_MNB',type:'number'}])
+            valueList1.unshift([{ type: 'string', label: 'Time' },{label:'Usage',type:'number'},{label:'Forecast_Random_forest',type:'number'},{label:'Forecast_LR',type:'number'},{label:'Forecast_Extreme_gradient_descent',type:'number'},{label:'Forecast_MNB',type:'number'}])
             setList1(valueList1);
             console.log("output array1 from flask", outputArray1)
             console.log("value list 1",valueList1)
@@ -238,6 +254,27 @@ export default function HomePage() {
                 <h3>{getMessage1.data.message}</h3>
                 :
                 <h3>LOADING</h3>}
+            </div>
+
+
+            <div style={{alignItems:'center',justifyContent:'center', width:500, margin:'0px auto'}}>
+                <Box justify = "center">
+                <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">Storage</InputLabel>
+                    <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={model}
+                    label="Storage"
+                    onChange={handleChangeOnModel}
+                    >
+                    <MenuItem value={'autoarima'}>AutoArima</MenuItem>
+                    <MenuItem value={'prophet'}>Prophet</MenuItem>
+                    <MenuItem value={'rnn'}>RNN</MenuItem>
+                    <MenuItem value={'mlmodels'}>ML Models</MenuItem>
+                    </Select>
+                </FormControl>
+                </Box>
             </div>
 
             <form>
@@ -294,7 +331,7 @@ export default function HomePage() {
                     </FormControl>
                     </Box>
                 </div>
-                <br/>
+                
 
                 <Button variant="contained"
                     onClick={(e) => {

@@ -16,12 +16,15 @@ class AutoArima:
         
         # df_User1 = dataset[dataset['UserID']==1]
         dataset.index = dataset['Time']
+        dataset = dataset[dataset["UserID"]==1]         
+        # df = dataset.drop(['Time','UserID'],axis=1)
         df = dataset.drop(['Time'],axis=1)
+
         print(df)
         return df
 
     def train(df):
-        test_size = len(df)*0.2
+        test_size = 50
         test_ind = len(df) - test_size
         train = df.iloc[:test_ind]
         test = df.iloc[test_ind:]
@@ -39,7 +42,7 @@ class AutoArima:
         return test
     
     def predict(test):
-        test_size = 50
+        test_size = len(test)
         with open('arima.pkl', 'rb') as pkl:
             prediction = pd.DataFrame(pickle.load(pkl).predict(n_periods=test_size),index=test.index)
             prediction.columns = ['forecast']
@@ -47,6 +50,6 @@ class AutoArima:
             return prediction
 
     def update(df):
-        with open('arima.pkl', 'wb') as pkl:
+        with open('arima.pkl', 'rb') as pkl:
             arima_model = pickle.load(pkl).update(df)
             pickle.dump(arima_model, pkl)
