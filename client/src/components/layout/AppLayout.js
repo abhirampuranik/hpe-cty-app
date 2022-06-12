@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-// import Sidebar from "../sidebar/Sidebar";
+import Sidebar from "../sidebar/Sidebar";
 import FooterComponent from './Footer'
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -42,10 +42,10 @@ export default function AppLayout() {
         setsidebarOn(!sidebarOn);
     }
     let SideBar;
-    // if(sidebarOn)
-    // {
-    //     SideBar = <Sidebar />;
-    // }
+    if(sidebarOn)
+    {
+        SideBar = <Sidebar />;
+    }
 
 
 
@@ -56,7 +56,7 @@ export default function AppLayout() {
 
         {/* {if(something)}   */}
         
-        {/* {SideBar} */}
+        {SideBar}
         <AppBar position="static" style={{ background: '' }} >
           <Toolbar>
             <IconButton

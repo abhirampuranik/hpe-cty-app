@@ -22,7 +22,7 @@ export default function HomePage() {
     const [List,setList]=useState([]);
     
     const [model, setModel] = React.useState('');
-    const [storage, setStorage] = useState('');
+    
 
 
     const [processed, setProcessed] = useState(false);
@@ -32,7 +32,7 @@ export default function HomePage() {
     const [outputArray1, setoutputArray1] = useState([]);
     const [List1,setList1]=useState([]);
 
-    const [ListStorage,setListStorage]=useState([]);
+    
 
 
     const fileReader = new FileReader();
@@ -42,9 +42,7 @@ export default function HomePage() {
         setModel(event.target.value);
       };
 
-      const handleChangeOnStorage = (event) => {
-        setStorage(event.target.value);
-      };
+     
 
 
     const handleOnChange = (e) => {
@@ -82,15 +80,6 @@ export default function HomePage() {
         }).catch(error => {
           console.log(error)
         })
-
-
-        axios.get('http://127.0.0.1:5000/liststorages').then(response => {
-          console.log("SUCCESS", response)
-          setGetMessage1(response)
-        }).catch(error => {
-          console.log(error)
-        })
-
         
     
       }, [])
@@ -144,7 +133,7 @@ export default function HomePage() {
               'Content-Type': 'multipart/form-data'
             }
             } )
-            .then(function (response) {
+            .then(function (response) { 
                 console.log(response.data);
                 setpredcsv(response.data);
                 setProcessing(false);
@@ -197,8 +186,6 @@ export default function HomePage() {
 
     useEffect(() => {
         // const fileReader1 = new FileReader();
-        console.log("pred value set aagide macha")
-
         setoutputArray1(predcsv.split('\n'));
 
         // fileReader1.readAsText(predcsv);
@@ -257,25 +244,7 @@ export default function HomePage() {
             </div>
 
 
-            <div style={{alignItems:'center',justifyContent:'center', width:500, margin:'0px auto'}}>
-                <Box justify = "center">
-                <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">Storage</InputLabel>
-                    <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={model}
-                    label="Storage"
-                    onChange={handleChangeOnModel}
-                    >
-                    <MenuItem value={'autoarima'}>AutoArima</MenuItem>
-                    <MenuItem value={'prophet'}>Prophet</MenuItem>
-                    <MenuItem value={'rnn'}>RNN</MenuItem>
-                    <MenuItem value={'mlmodels'}>ML Models</MenuItem>
-                    </Select>
-                </FormControl>
-                </Box>
-            </div>
+            
 
             <form>
                 {/* <input
@@ -330,6 +299,7 @@ export default function HomePage() {
                         </Select>
                     </FormControl>
                     </Box>
+                    
                 </div>
                 
 
@@ -338,15 +308,6 @@ export default function HomePage() {
                         sendCSV(e);
                     }}
                     >Send File</Button>
-
-
-                {/* <button
-                    onClick={(e) => {
-                        sendCSV(e);
-                    }}
-                >
-                    Send file
-                </button> */}
             </form>
             
         </div>

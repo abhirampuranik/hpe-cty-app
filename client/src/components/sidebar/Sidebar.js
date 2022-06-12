@@ -4,40 +4,16 @@ import './sidebar.scss';
 import React from 'react';
 const sidebarNavItems = [
     {
-        display: 'Manufacturer',
+        display: 'Static',
         icon: <i className='bx bx-home'></i>,
-        to: '/',
+        to: '/' || '/dashboard',
         section: ''
     },
     {
-        display: 'Transporter',
+        display: 'Storage',
         icon: <i className='bx bx-star'></i>,
-        to: '/transporter',
-        section: 'transporter'
-    },
-    {
-        display: 'Distributor',
-        icon: <i className='bx bx-calendar'></i>,
-        to: '/distributor',
-        section: 'distributor'
-    },
-    {
-        display: 'Regional Centre',
-        icon: <i className='bx bx-user'></i>,
-        to: '/region',
-        section: 'region'
-    },
-    {
-        display: 'User',
-        icon: <i className='bx bx-user'></i>,
-        to: '/user',
-        section: 'user'
-    },
-    {
-        display:'Login',
-        icon: <i className='bx bx-user'></i>,
-        to: '/login',
-        section: 'login'
+        to: '/storage',
+        section: 'storage'
     },
 ]
 
