@@ -21,11 +21,10 @@ class AutoArima:
         return df
 
     def train(df):
-        test_size = 50
+        test_size = len(df)*0.2
         test_ind = len(df) - test_size
         train = df.iloc[:test_ind]
         test = df.iloc[test_ind:]
-
         from pmdarima.arima import auto_arima
         arima_model = auto_arima(train, start_p=0, d=1, start_q=0,
         max_p=5, max_d=5, max_q=5, start_P=0,

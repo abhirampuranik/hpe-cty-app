@@ -31,7 +31,7 @@ def hello_get():
         'message': 'Flask Running'
     }
 
-@app.route('/autoarima',methods=['POST'])
+@app.route('/autoarima/train',methods=['POST'])
 def autoarima():
     file = request.files['file'] 
     df = pd.read_csv(file)
@@ -41,7 +41,24 @@ def autoarima():
     print(preds)
     response=preds
     return response.to_csv()
-    # return 'autoarima'
+
+@app.route('/autoarima/update',methods=['POST'])
+def autoarima():
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    df = AutoArima.preprocess(df)
+    AutoArima.update(df)
+    return "Updated Model Successfully"
+
+@app.route('/autoarima/predict',methods=['POST'])
+def autoarima():
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    df = AutoArima.preprocess(df)
+    preds = AutoArima.predict(df)
+    # print(preds)
+    response=preds
+    return response.to_csv()
 
 @app.route('/prophet',methods=['POST'])
 def prophet():
