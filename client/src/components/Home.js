@@ -139,7 +139,7 @@ export default function HomePage() {
         formData.append("file", file1);
 
         if(model === 'autoarima'){
-            axios.post('http://127.0.0.1:5000/autoarima/update', formData, {
+            axios.post('http://127.0.0.1:5000/autoarima/train', formData, {
             headers: {
               'Content-Type': 'multipart/form-data'
             }

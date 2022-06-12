@@ -49,7 +49,7 @@ def autoarima_train():
 def autoarima_update():
     file = request.files['file'] 
     df = pd.read_csv(file)
-    df = AutoArima.preprocess(df)
+    df = AutoArima.preprocess(df[:10])
     AutoArima.update(df)
     return "Updated Model Successfully"
 
@@ -58,7 +58,7 @@ def autoarima_predict():
     file = request.files['file'] 
     df = pd.read_csv(file)
     df = AutoArima.preprocess(df)
-    preds = AutoArima.predict(df)
+    preds = AutoArima.predict(df[:50])
     # print(preds)
     response=preds
     return response.to_csv()

@@ -17,8 +17,8 @@ class AutoArima:
         # df_User1 = dataset[dataset['UserID']==1]
         dataset.index = dataset['Time']
         dataset = dataset[dataset["UserID"]==1]         
-        # df = dataset.drop(['Time','UserID'],axis=1)
-        df = dataset.drop(['Time'],axis=1)
+        df = dataset.drop(['Time','UserID'],axis=1)
+        # df = dataset.drop(['Time'],axis=1)
 
         print(df)
         return df
