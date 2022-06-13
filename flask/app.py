@@ -3,6 +3,10 @@ import os
 from urllib import request
 import pandas as pd
 from autoARIMA import AutoArima
+from linearRegression import linearRegressionClass
+from randomForest import randomForestClass
+from xgb import XGBClass 
+from multinomialNaiveBayes import MultinomialNaiveBayesClass
 # from ProphetAPI import ProphetClass
 from dateGen import DateGen
 # from rnn import Rnn
@@ -92,7 +96,41 @@ def MLModels():
     preds = MLModelsClass.model(df)
     print(preds)
     response = preds
-    return response.to_csv()    
+    return response.to_csv()  
+
+@app.route('/linearRegression',methods=['POST'])
+def linearRegression():
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    preds = linearRegressionClass.model(df)
+    print(preds)
+    response = preds
+    return response.to_csv()     
+
+@app.route('/randomForest',methods=['POST'])
+def randomForest():
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    preds = randomForestClass.model(df)
+    print(preds)
+    response = preds
+    return response.to_csv()       
+
+@app.route('/XGB',methods=['POST'])
+def XGB():
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    preds = XGBClass.model(df)
+    print(preds)
+    response = preds
+
+@app.route('/MultinomialNaiveBayes',methods=['POST'])
+def MultinomialNaiveBayes():
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    preds = MultinomialNaiveBayesClass.model(df)
+    print(preds)
+    response = preds    
 
 @app.route('/dateGen',methods=['GET'])
 def dategenerator():
