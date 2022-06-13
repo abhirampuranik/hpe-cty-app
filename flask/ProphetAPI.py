@@ -52,10 +52,7 @@ class ProphetClass:
             prediction.set_index('Time', inplace=True)
             return prediction
 
-    def update(df):
-        with open('prophet.pkl', 'wb') as pkl:
-            prophet_model = pickle.load(pkl).update(df)
-            pickle.dump(prophet_model, pkl)
+
 
 
   
