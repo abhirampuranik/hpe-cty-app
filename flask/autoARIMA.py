@@ -8,7 +8,7 @@ class AutoArima:
     def __init__(csv):
         pass
     
-    def preprocess(df):
+    def preprocess(df,UserID):
         dataset = df
         # df_User1 = dataset[dataset['UserID']==1]
         # df_User1.index = df_User1['Time']
@@ -16,15 +16,16 @@ class AutoArima:
         
         # df_User1 = dataset[dataset['UserID']==1]
         dataset.index = dataset['Time']
-        dataset = dataset[dataset["UserID"]==1]         
-        df = dataset.drop(['Time','UserID'],axis=1)
-        # df = dataset.drop(['Time'],axis=1)
-
+        try:
+            df = df[df["UserID"]==str(UserID)]
+            df = dataset.drop(['Time','UserID'],axis=1)
+        except:
+            df = dataset.drop(['Time'],axis=1)
         print(df)
         return df
 
     def train(df):
-        test_size = 50
+        test_size = (int)(len(df)*0.2)
         test_ind = len(df) - test_size
         train = df.iloc[:test_ind]
         test = df.iloc[test_ind:]
@@ -52,4 +53,11 @@ class AutoArima:
     def update(df):
         with open('arima.pkl', 'rb') as pkl:
             arima_model = pickle.load(pkl).update(df)
-            pickle.dump(arima_model, pkl)
+            with open('arima.pkl', 'wb') as pkl:
+                pickle.dump(arima_model, pkl)
+
+# dataset = pd.read_csv('../test_data/storage.csv')
+# df = AutoArima.preprocess(dataset,1)
+# test = df[:-50]
+# test = AutoArima.train(test[:25])
+# update = AutoArima.update(df[25:])
