@@ -5,8 +5,8 @@ import pandas as pd
 from autoARIMA import AutoArima
 # from ProphetAPI import ProphetClass
 from dateGen import DateGen
-from rnn import Rnn
-from ML import MLModelsClass
+# from rnn import Rnn
+# from ML import MLModelsClass
 from flask import Flask, flash, request, redirect, url_for, session
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
@@ -38,7 +38,7 @@ def hello_get():
 def autoarima_train():
     file = request.files['file'] 
     df = pd.read_csv(file)
-    df = AutoArima.preprocess(df)
+    df = AutoArima.preprocess(df,1)
     test = AutoArima.train(df)
     preds = AutoArima.predict(test)
     print(preds)
@@ -49,7 +49,7 @@ def autoarima_train():
 def autoarima_update():
     file = request.files['file'] 
     df = pd.read_csv(file)
-    df = AutoArima.preprocess(df[:10])
+    df = AutoArima.preprocess(df,1)
     AutoArima.update(df)
     return "Updated Model Successfully"
 
@@ -57,7 +57,7 @@ def autoarima_update():
 def autoarima_predict():
     file = request.files['file'] 
     df = pd.read_csv(file)
-    df = AutoArima.preprocess(df)
+    df = AutoArima.preprocess(df,1)
     preds = AutoArima.predict(df[:50])
     # print(preds)
     response=preds

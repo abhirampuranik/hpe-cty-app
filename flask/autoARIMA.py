@@ -9,18 +9,20 @@ class AutoArima:
         pass
     
     def preprocess(df,UserID):
-        dataset = df
-        # df_User1 = dataset[dataset['UserID']==1]
+        df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+        # df_User1 = df[df['UserID']==1]
         # df_User1.index = df_User1['Time']
         # df = df_User1.drop(['Time','UserID'],axis=1)
         
-        # df_User1 = dataset[dataset['UserID']==1]
-        dataset.index = dataset['Time']
+        # df_User1 = df[df['UserID']==1]
+        # print(UserID)
+        df.index = df['Time']
         try:
-            df = df[df["UserID"]==str(UserID)]
-            df = dataset.drop(['Time','UserID'],axis=1)
+            df = df[df["UserID"]==UserID]
+            df = df.drop(['Time','UserID'],axis=1)
         except:
-            df = dataset.drop(['Time'],axis=1)
+            df = df.drop(['Time'],axis=1)
+            print("no UserID Col")
         print(df)
         return df
 
@@ -56,8 +58,8 @@ class AutoArima:
             with open('arima.pkl', 'wb') as pkl:
                 pickle.dump(arima_model, pkl)
 
-# dataset = pd.read_csv('../test_data/storage.csv')
-# df = AutoArima.preprocess(dataset,1)
+# df = pd.read_csv('../test_data/storage.csv')
+# df = AutoArima.preprocess(df,1)
 # test = df[:-50]
 # test = AutoArima.train(test[:25])
 # update = AutoArima.update(df[25:])
