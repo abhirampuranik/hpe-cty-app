@@ -43,11 +43,13 @@ def autoarima_train():
     file = request.files['file'] 
     df = pd.read_csv(file)
     df = AutoArima.preprocess(df,1)
-    test = AutoArima.train(df)
-    preds = AutoArima.predict(test)
-    print(preds)
-    response=preds
-    return response.to_csv()
+    AutoArima.train(df)
+    return "Model Trained Successfully"
+    # preds = AutoArima.predict(test)
+    # print(preds)
+    # response=preds
+    # return response.to_csv()
+
 
 @app.route('/autoarima/update',methods=['POST'])
 def autoarima_update():
