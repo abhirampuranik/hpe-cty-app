@@ -51,6 +51,22 @@ def autoarima_train():
     # return response.to_csv()
 
 
+@app.route('/linearRegression/train',methods=['POST'])
+def linearRegression_train():
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    df = linearRegressionClass.preprocess(df)
+    test = linearRegressionClass.train(df)
+    preds = linearRegressionClass.predict(test)
+    print(preds)
+    response=preds
+    return response.to_csv()
+
+    # preds = linearRegressionClass.model(df)
+    # print(preds)
+    # response = preds
+    # return response.to_csv()    
+
 @app.route('/autoarima/update',methods=['POST'])
 def autoarima_update():
     file = request.files['file'] 
@@ -58,6 +74,14 @@ def autoarima_update():
     df = AutoArima.preprocess(df,1)
     AutoArima.update(df)
     return "Updated Model Successfully"
+
+@app.route('/linearRegression/update',methods=['POST'])
+def linearRegression_update():
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    df = linearRegressionClass.preprocess(df)
+    linearRegressionClass.update(df)
+    return "Updated Model Successfully"    
 
 @app.route('/autoarima/predict',methods=['POST'])
 def autoarima_predict():
@@ -72,6 +96,16 @@ def autoarima_predict():
     # print(preds)
     response=preds
     return response.to_csv()
+
+@app.route('/linearRegression/predict',methods=['POST'])
+def linearRegression_predict():
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    df = linearRegressionClass.preprocess(df)
+    preds = linearRegressionClass.predict(df[:50])
+    # print(preds)
+    response=preds
+    return response.to_csv()    
 
 @app.route('/prophet',methods=['POST'])
 def prophet():
@@ -104,14 +138,14 @@ def MLModels():
     response = preds
     return response.to_csv()  
 
-@app.route('/linearRegression',methods=['POST'])
-def linearRegression():
-    file = request.files['file'] 
-    df = pd.read_csv(file)
-    preds = linearRegressionClass.model(df)
-    print(preds)
-    response = preds
-    return response.to_csv()     
+# @app.route('/linearRegression',methods=['POST'])
+# def linearRegression():
+#     file = request.files['file'] 
+#     df = pd.read_csv(file)
+#     preds = linearRegressionClass.model(df)
+#     print(preds)
+#     response = preds
+#     return response.to_csv()     
 
 @app.route('/randomForest',methods=['POST'])
 def randomForest():
