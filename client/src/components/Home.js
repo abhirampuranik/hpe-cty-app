@@ -13,7 +13,8 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormLabel from "@mui/material/FormLabel";
-
+import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
 
 export default function HomePage() {
 
@@ -45,6 +46,15 @@ export default function HomePage() {
 
     const fileReader = new FileReader();
 
+    const [open, setOpen] = React.useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
 
     const handleChangeOnModel = (event) => {
         setModel(event.target.value);
@@ -152,6 +162,7 @@ export default function HomePage() {
                     setpredcsv(response.data);
                     setProcessing(false);
                     setProcessed(true);
+                    setOpen(true);
                 })
             }else if(action === 'predict'){
                 axios.post('http://127.0.0.1:5000/autoarima/predict', {
@@ -181,6 +192,7 @@ export default function HomePage() {
                     setpredcsv(response.data);
                     setProcessing(false);
                     setProcessed(true);
+                    setOpen(true);
                 })
             }
 
@@ -244,7 +256,7 @@ export default function HomePage() {
     useEffect(() => {
         let valueList1 = []
 
-
+        
         if(model === 'autoarima'){
             outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[1]])));
             // outputArray1.map((record)=>(valueList1.push([record.split('  ')[0], record.split('  ')[1].split(',')[0]])));
@@ -281,8 +293,6 @@ export default function HomePage() {
 
     return (
         <div style={{ textAlign: "center", alignContent:"center", alignItems:"center" }}>
-          
-
         <div style={{ textAlign: "center" , alignContent:'center'}}>
             <h1>Upload your data</h1>
             
@@ -415,8 +425,7 @@ export default function HomePage() {
                         </div>
 
 
-
-                    </div>:
+                    </div> :
                     
                     <div>
                         <Input 
@@ -433,15 +442,19 @@ export default function HomePage() {
                     </div>
 
                 }
-                
                 <br/>
-
                 <Button variant="contained"
                     onClick={(e) => {
                         sendCSV(e);
                     }}
-                    >Send File</Button>
-            {/* </form> */}
+                   >Send File</Button>
+
+                   
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+          This is a success message!
+        </Alert>
+      </Snackbar>
             
         </div>
 
