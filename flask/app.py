@@ -50,7 +50,6 @@ def autoarima_train():
     # response=preds
     # return response.to_csv()
 
-
 @app.route('/linearRegression/train',methods=['POST'])
 def linearRegression_train():
     file = request.files['file'] 
@@ -61,11 +60,43 @@ def linearRegression_train():
     print(preds)
     response=preds
     return response.to_csv()
-
     # preds = linearRegressionClass.model(df)
     # print(preds)
     # response = preds
-    # return response.to_csv()    
+    # return response.to_csv() 
+
+@app.route('/randomForest/train',methods=['POST'])
+def randomForest_train():
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    df = randomForestClass.preprocess(df)
+    test = randomForestClass.train(df)
+    preds = randomForestClass.predict(test)
+    print(preds)
+    response=preds
+    return response.to_csv() 
+
+@app.route('/multinomialNaiveBayes/train',methods=['POST'])
+def multinomialNaiveBayes_train():
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    df = MultinomialNaiveBayesClass.preprocess(df)
+    test = MultinomialNaiveBayesClass.train(df)
+    preds = MultinomialNaiveBayesClass.predict(test)
+    print(preds)
+    response=preds
+    return response.to_csv() 
+
+@app.route('/xgb/train',methods=['POST'])
+def xgb_train():
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    df = XGBClass.preprocess(df)
+    test = XGBClass.train(df)
+    preds = XGBClass.predict(test)
+    print(preds)
+    response=preds
+    return response.to_csv()               
 
 @app.route('/autoarima/update',methods=['POST'])
 def autoarima_update():
@@ -81,7 +112,31 @@ def linearRegression_update():
     df = pd.read_csv(file)
     df = linearRegressionClass.preprocess(df)
     linearRegressionClass.update(df)
-    return "Updated Model Successfully"    
+    return "Updated Model Successfully"   
+
+@app.route('/randomForest/update',methods=['POST'])
+def randomForest():
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    df = randomForestClass.preprocess(df)
+    randomForestClass.update(df)
+    return "Updated Model Successfully" 
+
+@app.route('/multinomialNaiveBayes/update',methods=['POST'])
+def multinomialNaiveBayes_update():
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    df = MultinomialNaiveBayesClass.preprocess(df)
+    MultinomialNaiveBayesClass.update(df)
+    return "Updated Model Successfully" 
+
+@app.route('/xgb/update',methods=['POST'])
+def xgb_update():
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    df = XGBClass.preprocess(df)
+    XGBClass.update(df)
+    return "Updated Model Successfully"              
 
 @app.route('/autoarima/predict',methods=['POST'])
 def autoarima_predict():
@@ -105,7 +160,37 @@ def linearRegression_predict():
     preds = linearRegressionClass.predict(df[:50])
     # print(preds)
     response=preds
-    return response.to_csv()    
+    return response.to_csv()  
+
+@app.route('/randomForest/predict',methods=['POST'])
+def randomForest_predict():
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    df = randomForestClass.preprocess(df)
+    preds = randomForestClass.predict(df[:50])
+    # print(preds)
+    response=preds
+    return response.to_csv()
+
+@app.route('/multinomialNaiveBayes/predict',methods=['POST'])
+def multinomialNaiveBayes_predict():
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    df = MultinomialNaiveBayesClass.preprocess(df)
+    preds = MultinomialNaiveBayesClass.predict(df[:50])
+    # print(preds)
+    response=preds
+    return response.to_csv()
+
+@app.route('/xgb/predict',methods=['POST'])
+def xgb_predict():
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    df = XGBClass.preprocess(df)
+    preds = XGBClass.predict(df[:50])
+    # print(preds)
+    response=preds
+    return response.to_csv()
 
 @app.route('/prophet',methods=['POST'])
 def prophet():
@@ -147,30 +232,30 @@ def MLModels():
 #     response = preds
 #     return response.to_csv()     
 
-@app.route('/randomForest',methods=['POST'])
-def randomForest():
-    file = request.files['file'] 
-    df = pd.read_csv(file)
-    preds = randomForestClass.model(df)
-    print(preds)
-    response = preds
-    return response.to_csv()       
+# @app.route('/randomForest',methods=['POST'])
+# def randomForest():
+#     file = request.files['file'] 
+#     df = pd.read_csv(file)
+#     preds = randomForestClass.model(df)
+#     print(preds)
+#     response = preds
+#     return response.to_csv()       
 
-@app.route('/XGB',methods=['POST'])
-def XGB():
-    file = request.files['file'] 
-    df = pd.read_csv(file)
-    preds = XGBClass.model(df)
-    print(preds)
-    response = preds
+# @app.route('/XGB',methods=['POST'])
+# def XGB():
+#     file = request.files['file'] 
+#     df = pd.read_csv(file)
+#     preds = XGBClass.model(df)
+#     print(preds)
+#     response = preds
 
-@app.route('/MultinomialNaiveBayes',methods=['POST'])
-def MultinomialNaiveBayes():
-    file = request.files['file'] 
-    df = pd.read_csv(file)
-    preds = MultinomialNaiveBayesClass.model(df)
-    print(preds)
-    response = preds    
+# @app.route('/MultinomialNaiveBayes',methods=['POST'])
+# def MultinomialNaiveBayes():
+#     file = request.files['file'] 
+#     df = pd.read_csv(file)
+#     preds = MultinomialNaiveBayesClass.model(df)
+#     print(preds)
+#     response = preds    
 
 @app.route('/dateGen',methods=['GET'])
 def dategenerator():
