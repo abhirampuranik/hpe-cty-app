@@ -25,6 +25,11 @@ export default function HomePage() {
     const [List,setList]=useState([]);
     
     const [model, setModel] = useState('');
+    const [nextDays, setNextDays] = useState(0);
+    const [nextHours, setNextHours] = useState(0);
+    const [userID, setUserID] = useState(1);
+
+
     
     const [action, setAction] = useState('train');
 
@@ -135,17 +140,53 @@ export default function HomePage() {
         formData.append("file", file1);
 
         if(model === 'autoarima'){
-            axios.post('http://127.0.0.1:5000/autoarima/train', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
+
+            if(action === 'train'){
+                axios.post('http://127.0.0.1:5000/autoarima/train', formData, {
+                headers: {
+                'Content-Type': 'multipart/form-data'
+                }
+                } )
+                .then(function (response) { 
+                    console.log(response.data);
+                    setpredcsv(response.data);
+                    setProcessing(false);
+                    setProcessed(true);
+                })
+            }else if(action === 'predict'){
+                axios.post('http://127.0.0.1:5000/autoarima/predict', {
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body:{
+                    "days": nextDays,
+                    "hours":nextHours,
+                    "userID": userID
+                }
+                } )
+                .then(function (response) { 
+                    console.log(response.data);
+                    setpredcsv(response.data);
+                    setProcessing(false);
+                    setProcessed(true);
+                })
+            }else{
+                axios.post('http://127.0.0.1:5000/autoarima/update', formData, {
+                headers: {
+                'Content-Type': 'multipart/form-data'
+                }
+                } )
+                .then(function (response) { 
+                    console.log(response.data);
+                    setpredcsv(response.data);
+                    setProcessing(false);
+                    setProcessed(true);
+                })
             }
-            } )
-            .then(function (response) { 
-                console.log(response.data);
-                setpredcsv(response.data);
-                setProcessing(false);
-                setProcessed(true);
-            })
+
+            
+
+
         }else if(model === 'prophet'){
             axios.post('http://127.0.0.1:5000/prophet', formData, {
             headers: {
@@ -254,28 +295,9 @@ export default function HomePage() {
 
             
 
-            <form>
+            {/* <form> */}
 
-                <Input 
-                    type='file'
-                    id='csvFileInput'
-                    onChange={handleOnChange}
-
-                />
-                &nbsp;&nbsp;
-                <Button variant="contained"
-                    onClick={(e) => {
-                        handleOnSubmit(e);
-                    }}
-                    >Import CSV and Plot</Button>
-
-
-
-                &nbsp;
-               
-
-                <br/>
-                <br/>
+                
 
                 
                 <div style={{alignItems:'center',justifyContent:'center', width:250, margin:'0px auto'}}>
@@ -300,8 +322,8 @@ export default function HomePage() {
                     
                 <br/>
                 
-
-                <FormControl>
+                {model==='autoarima'?
+                    <FormControl>
                     <FormLabel id="demo-row-radio-buttons-group-label">Action</FormLabel>
                     <RadioGroup
                         row
@@ -312,10 +334,105 @@ export default function HomePage() {
                     >
                         <FormControlLabel value="train" control={<Radio />} label="Train" />
                         <FormControlLabel value="predict" control={<Radio />} label="Predict" />
-
+                        <FormControlLabel value="update" control={<Radio />} label="Update" />
                     </RadioGroup>
-                </FormControl>
-                
+                    </FormControl>
+                    
+                    
+                    
+                    :<span></span>
+                }
+
+                {action === 'predict' && model === 'autoarima'?
+                    <div>
+                        <br/>
+                        <div style={{alignItems:'center',justifyContent:'center', width:150, margin:'0px auto'}}>
+                            <table>
+                                <tr>
+                                <td>
+                                <Box justify = "center">
+                                <FormControl fullWidth>
+                                    <InputLabel id="demo-simple-select-label">Days</InputLabel>
+                                    <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={nextDays}
+                                    label="Model"
+                                    onChange={(event)=>{setNextDays(event.target.value)}}
+                                    >
+                                    <MenuItem value={'0'}>0</MenuItem>
+                                    <MenuItem value={'1'}>1</MenuItem>
+                                    <MenuItem value={'2'}>2</MenuItem>
+                                    <MenuItem value={'3'}>3</MenuItem>
+                                    <MenuItem value={'3'}>4</MenuItem>
+
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                            </td>
+                            {/* <br/> */}
+                            <td>
+                            <Box justify = "center">
+                                <FormControl fullWidth>
+                                    <InputLabel id="demo-simple-select-label">Hours</InputLabel>
+                                    <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={nextHours}
+                                    label="Model"
+                                    onChange={(event)=>{setNextHours(event.target.value)}}
+                                    >
+                                    <MenuItem value={'0'}>0</MenuItem>
+                                    <MenuItem value={'1'}>1</MenuItem>
+                                    <MenuItem value={'2'}>2</MenuItem>
+                                    <MenuItem value={'3'}>3</MenuItem>
+                                    <MenuItem value={'3'}>4</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                            </td>
+                                </tr>
+                            </table>
+
+                            <br/>
+                            <Box justify = "center">
+                                <FormControl fullWidth>
+                                    <InputLabel id="demo-simple-select-label">User ID</InputLabel>
+                                    <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={userID}
+                                    label="Model"
+                                    onChange={(event)=>{setUserID(event.target.value)}}
+                                    >
+                                    <MenuItem value={'1'}>1</MenuItem>
+                                    <MenuItem value={'2'}>2</MenuItem>
+                                    <MenuItem value={'3'}>3</MenuItem>
+                                    <MenuItem value={'3'}>4</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                        </div>
+
+
+
+                    </div>:
+                    
+                    <div>
+                        <Input 
+                        type='file'
+                        id='csvFileInput'
+                        onChange={handleOnChange}/>
+                        &nbsp;&nbsp;
+                        <Button variant="contained"
+                        onClick={(e) => {
+                            handleOnSubmit(e);
+                        }}
+                        >Import CSV and Plot</Button>
+
+                    </div>
+
+                }
                 
                 <br/>
 
@@ -324,7 +441,7 @@ export default function HomePage() {
                         sendCSV(e);
                     }}
                     >Send File</Button>
-            </form>
+            {/* </form> */}
             
         </div>
 

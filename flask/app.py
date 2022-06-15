@@ -85,10 +85,14 @@ def linearRegression_update():
 
 @app.route('/autoarima/predict',methods=['POST'])
 def autoarima_predict():
-    file = request.files['file'] 
-    df = pd.read_csv(file)
-    df = AutoArima.preprocess(df,1)
-    preds = AutoArima.predict(df[:50])
+    days = request.json['body']['days']
+    hours = request.json['body']['hours']
+    userID = request.json['body']['userID']
+    # df = pd.read_csv(file)
+    dg = DateGen()
+    df = dg.date_df(int(days)*24 + int(hours), int(userID))
+    # df = AutoArima.preprocess(df,1)
+    preds = AutoArima.predict(df)
     # print(preds)
     response=preds
     return response.to_csv()
