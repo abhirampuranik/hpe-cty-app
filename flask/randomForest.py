@@ -1,4 +1,5 @@
 import pandas as pd
+import pickle
 
 class randomForestClass:
     def __init__():
@@ -25,7 +26,7 @@ class randomForestClass:
 
     def train(df):    
         from sklearn.ensemble import RandomForestRegressor
-        model=RandomForestRegressor(n_estimators=100,max_features=3, random_state=1)
+        rf_model=RandomForestRegressor(n_estimators=100,max_features=3, random_state=1)
         
         import numpy as np
         x1,x2,x3,y=df['Usage_LastMonth'],df['Usage_2Monthsback'],df['Usage_3Monthsback'],df['Usage']

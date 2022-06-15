@@ -1,4 +1,5 @@
 import pandas as pd
+import pickle
 
 class linearRegressionClass:
 	def __init__():
