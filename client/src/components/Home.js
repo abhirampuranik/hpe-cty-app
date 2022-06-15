@@ -347,7 +347,10 @@ export default function HomePage() {
                     <div>
                         <br/>
                         <div style={{alignItems:'center',justifyContent:'center', width:150, margin:'0px auto'}}>
-                            <Box justify = "center">
+                            <table>
+                                <tr>
+                                <td>
+                                <Box justify = "center">
                                 <FormControl fullWidth>
                                     <InputLabel id="demo-simple-select-label">Days</InputLabel>
                                     <Select
@@ -366,7 +369,9 @@ export default function HomePage() {
                                     </Select>
                                 </FormControl>
                             </Box>
-                            <br/>
+                            </td>
+                            {/* <br/> */}
+                            <td>
                             <Box justify = "center">
                                 <FormControl fullWidth>
                                     <InputLabel id="demo-simple-select-label">Hours</InputLabel>
@@ -385,6 +390,10 @@ export default function HomePage() {
                                     </Select>
                                 </FormControl>
                             </Box>
+                            </td>
+                                </tr>
+                            </table>
+
                             <br/>
                             <Box justify = "center">
                                 <FormControl fullWidth>
