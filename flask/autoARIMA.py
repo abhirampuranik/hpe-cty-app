@@ -27,10 +27,7 @@ class AutoArima:
         return df
 
     def train(df):
-        test_size = (int)(len(df)*0.2)
-        test_ind = len(df) - test_size
-        train = df.iloc[:test_ind]
-        test = df.iloc[test_ind:]
+        train = df
         from pmdarima.arima import auto_arima
         arima_model = auto_arima(train, start_p=0, d=1, start_q=0,
         max_p=5, max_d=5, max_q=5, start_P=0,
@@ -42,7 +39,6 @@ class AutoArima:
         arima_model.summary()
         with open('arima.pkl', 'wb') as pkl:
             pickle.dump(arima_model, pkl)
-        return test
     
     def predict(test):
         test_size = len(test)
