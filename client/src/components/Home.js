@@ -47,9 +47,7 @@ export default function HomePage() {
     const fileReader = new FileReader();
 
     const [state, setOpen] = React.useState({
-        open:false,
-        vertical: "top",
-    horizontal: "right",
+        open:false
 });
 
   const handleClose = (event, reason) => {
@@ -57,9 +55,7 @@ export default function HomePage() {
       return;
     }
 
-    setOpen({open:false,
-        vertical: "top",
-    horizontal: "right"});
+    setOpen({open:false});
   };
 
     const handleChangeOnModel = (event) => {
@@ -67,7 +63,7 @@ export default function HomePage() {
       };
 
       
-      const { vertical, horizontal, open } = state;
+      const {open} = state;
 
 
     const handleOnChange = (e) => {
@@ -458,7 +454,7 @@ export default function HomePage() {
 
                    
       <Snackbar 
-    //   anchorOrigin={{ vertical, horizontal }}
+      anchorOrigin={{ "vertical" : "top" , "horizontal" : "right" }}
       open={open} 
       autoHideDuration={10000} 
       onClose={handleClose}
