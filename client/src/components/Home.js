@@ -327,14 +327,15 @@ export default function HomePage() {
         
         
     }, [outputArray1]);
+
+
     
 
     return (
         <div style={{ textAlign: "center", alignContent:"center", alignItems:"center" }}>
-
+            
         <div style={{ textAlign: "center" , alignContent:'center'}}>
             <h1>Upload your data</h1>
-            
             <div>{getMessage1.status === 200 ? 
                 <h3>{getMessage1.data.message}</h3>
                 :
@@ -372,7 +373,9 @@ export default function HomePage() {
                         <MenuItem value={'1'}>1</MenuItem>
                         <MenuItem value={'2'}>2</MenuItem>
                         <MenuItem value={'3'}>3</MenuItem>
-                        <MenuItem value={'3'}>4</MenuItem>
+                        <MenuItem value={'4'}>4</MenuItem>
+                        <MenuItem value={'5'}>5</MenuItem>
+
                         </Select>
                     </FormControl>
                     </Box>
@@ -422,15 +425,10 @@ export default function HomePage() {
                                     onChange={(event)=>{setNextDays(event.target.value)}}
                                     >
                                     
-                                    {/* {
-                                    listDays.map((row, index)=>{
-                                        <MenuItem key={index} value={row}>1</MenuItem>
-                                    })} */}
-                                    <MenuItem value={'0'}>0</MenuItem>
-                                    <MenuItem value={'1'}>1</MenuItem>
-                                    <MenuItem value={'2'}>2</MenuItem>
-                                    <MenuItem value={'3'}>3</MenuItem>
-                                    <MenuItem value={'3'}>4</MenuItem>
+                                    {
+                                    listDays.map((row, index)=>(
+                                        <MenuItem key={index} value={row}>{row}</MenuItem>
+                                    ))}
 
                                     </Select>
                                 </FormControl>
@@ -448,17 +446,10 @@ export default function HomePage() {
                                     label="Model"
                                     onChange={(event)=>{setNextHours(event.target.value)}}
                                     >
-                                    {/* {
-                                    listHours.map((row, index)=>{
-                                        <MenuItem key={index} value={row}>{row}</MenuItem>
-                                        // <l1>num</l1>
-                                    })} */}
-
-                                    <MenuItem value={'0'}>0</MenuItem>
-                                    <MenuItem value={'1'}>1</MenuItem>
-                                    <MenuItem value={'2'}>2</MenuItem>
-                                    <MenuItem value={'3'}>3</MenuItem>
-                                    <MenuItem value={'3'}>4</MenuItem>
+                                    {
+                                    listHours.map((row)=>(
+                                        <MenuItem value={row}>{row}</MenuItem>
+                                    ))}
                                     </Select>
                                 </FormControl>
                             </Box>
