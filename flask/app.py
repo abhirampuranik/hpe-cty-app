@@ -1,7 +1,9 @@
+from operator import index
 import time
 import os
 from urllib import request
 import pandas as pd
+from sqlalchemy import false
 from autoARIMA import AutoArima
 from linearRegression import linearRegressionClass
 from randomForest import randomForestClass
@@ -38,8 +40,17 @@ def hello_get():
         'message': 'Flask Running'
     }
 
-@app.route('/autoarima/train',methods=['POST'])
+@app.route('/data',methods=['POST'])
 def autoarima_train():
+    file = request.files['file'] 
+    userID = int(request.form['userID'])
+    df = pd.read_csv(file)
+    df = df[df['UserID'] == userID]
+    return df.to_csv(index=False)
+
+
+@app.route('/autoarima/train',methods=['POST'])
+def data():
     file = request.files['file'] 
     df = pd.read_csv(file)
     df = AutoArima.preprocess(df,1)

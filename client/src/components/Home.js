@@ -33,7 +33,10 @@ export default function HomePage() {
     const [model, setModel] = useState('');
     const [nextDays, setNextDays] = useState(0);
     const [nextHours, setNextHours] = useState(0);
-    const [userID, setUserID] = useState(1);
+    const [userID, setUserID] = useState('1');
+
+    const [listDays, setListDays] = useState([]);
+    const [listHours, setListHours] = useState([]);
 
 
     
@@ -72,25 +75,13 @@ export default function HomePage() {
 
 
     const handleOnChange = (e) => {
-        setFile(e.target.files[0]);
-
-        
-        // const data = new FormData();
-
-        // data.append('file', e.target.files[0]);
-        // data.append('filename', this.fileName.value);
-
-        // fetch('http://localhost:5000/autoarima', {
-        // method: 'POST',
-        // body: data,
-        // }).then((response) => {
-        // response.json().then((body) => {
-        //     console.log("file went bruh")
-        // });
-        // });
-
-        
+        setFile(e.target.files[0]);        
     };
+
+    function range(start, end) {
+        return Array(end - start + 1).fill().map((_, idx) => start + idx)
+    }
+
 
     useEffect(()=>{
         axios.get('http://127.0.0.1:5000/time').then(response => {
@@ -106,32 +97,65 @@ export default function HomePage() {
         }).catch(error => {
           console.log(error)
         })
+
+
+        setListDays(range(0, 31));
+        setListHours(range(0,24));
         
     
       }, [])
+    
+    useEffect(()=>{
+        console.log(listDays)
+        console.log(listHours)
+
+    },[listDays])
 
 
+    // const fun1 = () => {
+    //     if (file) {
+    //         fileReader.onload = function (event) {
+    //             const csvOutput = event.target.result;
+    //             // setoutput(csvOutput.split('\n'));
+    //             setoutputArray(csvOutput.split('\n'));
 
-    const fun1 = () => {
-        if (file) {
-            fileReader.onload = function (event) {
-                const csvOutput = event.target.result;
-                // setoutput(csvOutput.split('\n'));
-                setoutputArray(csvOutput.split('\n'));
+    //         };
 
-            };
-
-            // setoutputArray(output);
-            fileReader.readAsText(file)
+    //         // setoutputArray(output);
+    //         fileReader.readAsText(file)
             
-        }
+    //     }
         
-    }
+    // }
 
     const handleOnSubmit = (e) => {
         e.preventDefault();
         
-        fun1();
+        // fun1();
+
+        let file1 = file;
+        const formData = new FormData();
+        formData.append("file", file1);
+        formData.append("userID", userID)
+
+        axios.post('http://127.0.0.1:5000/data', formData,
+        {
+        headers: {
+        'Content-Type': 'multipart/form-data'
+        },
+        body:{
+            'userID':userID
+        } 
+
+        })
+        .then(function (response) { 
+            console.log(response.data);
+            setoutputArray(response.data.split('\n'))
+
+        })
+
+
+
         
     };
 
@@ -140,7 +164,13 @@ export default function HomePage() {
       };
 
     useEffect(() => {
-        outputArray.map((record)=>(valueList.push([record.split(',')[0], record.split(',')[1]])));
+        console.log("output array",outputArray)
+        
+        outputArray.map((record)=>{
+                valueList.push([record.split(',')[0], record.split(',')[1]])
+            });
+        
+            
         valueList.unshift([{ type: 'string', label: 'Time' },{label:'Storage Consumption',type:'number'}])
         setList(valueList);
         console.log("List values",valueList)
@@ -301,6 +331,7 @@ export default function HomePage() {
 
     return (
         <div style={{ textAlign: "center", alignContent:"center", alignItems:"center" }}>
+
         <div style={{ textAlign: "center" , alignContent:'center'}}>
             <h1>Upload your data</h1>
             
@@ -310,17 +341,9 @@ export default function HomePage() {
                 <h3>LOADING</h3>}
             </div>
 
-
-            
-
-            {/* <form> */}
-
-                
-
-                
-                <div style={{alignItems:'center',justifyContent:'center', width:250, margin:'0px auto'}}>
+                <div style={{alignItems:'center',justifyContent:'center', width:1000, margin:'0px auto'}}>
                     <Box justify = "center">
-                    <FormControl fullWidth>
+                    <FormControl sx={{ m: 1, minWidth: 250 }}>
                         <InputLabel id="demo-simple-select-label">Select Model</InputLabel>
                         <Select
                         labelId="demo-simple-select-label"
@@ -335,7 +358,27 @@ export default function HomePage() {
                         <MenuItem value={'mlmodels'}>ML Models</MenuItem>
                         </Select>
                     </FormControl>
+                    
+
+                    <FormControl sx={{ m: 1, minWidth: 120 }}>
+                        <InputLabel id="demo-simple-select-label">User ID</InputLabel>
+                        <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={userID}
+                        label="Model"
+                        onChange={(event)=>{setUserID(event.target.value)}}
+                        >
+                        <MenuItem value={'1'}>1</MenuItem>
+                        <MenuItem value={'2'}>2</MenuItem>
+                        <MenuItem value={'3'}>3</MenuItem>
+                        <MenuItem value={'3'}>4</MenuItem>
+                        </Select>
+                    </FormControl>
                     </Box>
+
+
+
                 </div>
                     
                 <br/>
@@ -378,6 +421,11 @@ export default function HomePage() {
                                     label="Model"
                                     onChange={(event)=>{setNextDays(event.target.value)}}
                                     >
+                                    
+                                    {/* {
+                                    listDays.map((row, index)=>{
+                                        <MenuItem key={index} value={row}>1</MenuItem>
+                                    })} */}
                                     <MenuItem value={'0'}>0</MenuItem>
                                     <MenuItem value={'1'}>1</MenuItem>
                                     <MenuItem value={'2'}>2</MenuItem>
@@ -400,6 +448,12 @@ export default function HomePage() {
                                     label="Model"
                                     onChange={(event)=>{setNextHours(event.target.value)}}
                                     >
+                                    {/* {
+                                    listHours.map((row, index)=>{
+                                        <MenuItem key={index} value={row}>{row}</MenuItem>
+                                        // <l1>num</l1>
+                                    })} */}
+
                                     <MenuItem value={'0'}>0</MenuItem>
                                     <MenuItem value={'1'}>1</MenuItem>
                                     <MenuItem value={'2'}>2</MenuItem>
@@ -410,26 +464,7 @@ export default function HomePage() {
                             </Box>
                             </td>
                                 </tr>
-                            </table>
-
-                            <br/>
-                            <Box justify = "center">
-                                <FormControl fullWidth>
-                                    <InputLabel id="demo-simple-select-label">User ID</InputLabel>
-                                    <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={userID}
-                                    label="Model"
-                                    onChange={(event)=>{setUserID(event.target.value)}}
-                                    >
-                                    <MenuItem value={'1'}>1</MenuItem>
-                                    <MenuItem value={'2'}>2</MenuItem>
-                                    <MenuItem value={'3'}>3</MenuItem>
-                                    <MenuItem value={'3'}>4</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Box>
+                            </table>                            
                         </div>
 
 
@@ -450,6 +485,28 @@ export default function HomePage() {
                     </div>
 
                 }
+
+
+                {/* {model === 'autoarima'?
+                    <div style={{alignItems:'center',justifyContent:'center', width:150, margin:'0px auto'}}>
+                    <br/>
+                    <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">User ID</InputLabel>
+                        <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={userID}
+                        label="Model"
+                        onChange={(event)=>{setUserID(event.target.value)}}
+                        >
+                        <MenuItem value={'1'}>1</MenuItem>
+                        <MenuItem value={'2'}>2</MenuItem>
+                        <MenuItem value={'3'}>3</MenuItem>
+                        <MenuItem value={'3'}>4</MenuItem>
+                        </Select>
+                    </FormControl>
+                    </div>:<span></span>
+                } */}
                 <br/>
                 <Button variant="contained"
                     onClick={(e) => {
@@ -467,7 +524,7 @@ export default function HomePage() {
       >
         <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
           {
-            List1.length!=0?List1[1][0]:""
+            List1.length!==0?List1[1][0]:""
             // List1[1][0]
 
           }
