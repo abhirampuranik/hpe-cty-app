@@ -45,10 +45,6 @@ def autoarima_train():
     df = AutoArima.preprocess(df,1)
     AutoArima.train(df)
     return "Model Trained Successfully"
-    # preds = AutoArima.predict(test)
-    # print(preds)
-    # response=preds
-    # return response.to_csv()
 
 @app.route('/linearRegression/train',methods=['POST'])
 def linearRegression_train():

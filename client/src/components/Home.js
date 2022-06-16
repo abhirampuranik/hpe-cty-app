@@ -46,21 +46,28 @@ export default function HomePage() {
 
     const fileReader = new FileReader();
 
-    const [open, setOpen] = React.useState(false);
+    const [state, setOpen] = React.useState({
+        open:false,
+        vertical: "top",
+    horizontal: "right",
+});
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
 
-    setOpen(false);
+    setOpen({open:false,
+        vertical: "top",
+    horizontal: "right"});
   };
 
     const handleChangeOnModel = (event) => {
         setModel(event.target.value);
       };
 
-     
+      
+      const { vertical, horizontal, open } = state;
 
 
     const handleOnChange = (e) => {
@@ -162,7 +169,7 @@ export default function HomePage() {
                     setpredcsv(response.data);
                     setProcessing(false);
                     setProcessed(true);
-                    setOpen(true);
+                    setOpen({open:true});
                 })
             }else if(action === 'predict'){
                 axios.post('http://127.0.0.1:5000/autoarima/predict', {
@@ -192,7 +199,7 @@ export default function HomePage() {
                     setpredcsv(response.data);
                     setProcessing(false);
                     setProcessed(true);
-                    setOpen(true);
+                    setOpen({open:true});
                 })
             }
 
@@ -450,9 +457,18 @@ export default function HomePage() {
                    >Send File</Button>
 
                    
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+      <Snackbar 
+    //   anchorOrigin={{ vertical, horizontal }}
+      open={open} 
+      autoHideDuration={10000} 
+      onClose={handleClose}
+      >
         <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-          This is a success message!
+          {
+            List1.length!=0?List1[1][0]:""
+            // List1[1][0]
+
+          }
         </Alert>
       </Snackbar>
             
@@ -494,13 +510,13 @@ export default function HomePage() {
         </div>
 
         <br/>
-        {processed?<div><h1>Predictions</h1></div>:<span></span>}
+        {action === 'predict' && model === 'autoarima' && processed?<div><h1>Predictions</h1></div>:<span></span>}
         {processing? <div><h1>Processing</h1><HourglassTopIcon/></div>:<span></span>}
         
         
 
         <div style={{ alignContent: "center", width: '95%', margin:'auto' }}>
-            {processed?
+            {action === 'predict' && model === 'autoarima' && processed?
                 <Chart
                 width={'100%'}
                 height={'800px'}
