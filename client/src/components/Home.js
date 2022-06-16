@@ -15,6 +15,11 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormLabel from "@mui/material/FormLabel";
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
+import Slide from '@mui/material/Slide';
+
+function TransitionRight(props) {
+  return <Slide {...props} direction="right" />;
+}
 
 export default function HomePage() {
 
@@ -458,6 +463,7 @@ export default function HomePage() {
       open={open} 
       autoHideDuration={10000} 
       onClose={handleClose}
+      TransitionComponent = {TransitionRight}
       >
         <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
           {
