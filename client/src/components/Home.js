@@ -479,6 +479,8 @@ export default function HomePage() {
         
         
         <br/>
+        {processing? <div><h1>Processing</h1><HourglassTopIcon/></div>:<span></span>}
+        <br/>
         <div style={{ alignContent: "center", width: '95%', margin:'auto'}}>
             {outputArray.length!==0?
                 <div>
@@ -512,8 +514,9 @@ export default function HomePage() {
         </div>
 
         <br/>
+        
         {action === 'predict' && model === 'autoarima' && processed?<div><h1>Predictions</h1></div>:<span></span>}
-        {processing? <div><h1>Processing</h1><HourglassTopIcon/></div>:<span></span>}
+        
         
         
 
