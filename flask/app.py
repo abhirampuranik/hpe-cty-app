@@ -67,6 +67,25 @@ def stream():
         time.sleep(10)
     return "Model Streaming"
 
+# @app.route('/stream',methods=['GET'])
+# def stream():
+#     dg = DateGen()
+#     # file = request.files['file'] 
+#     df = pd.read_csv("storage_train.csv")
+#     df_prep = linearRegressionClass.preprocess(df,1)
+#     linearRegressionClass.train(df_prep[:50])
+#     for i in range(50,len(df_prep)):
+#         linearRegressionClass.update(df_prep[i:i+1])
+#         df = dg.date_df(10,1)
+#         preds = linearRegressionClass.predict(df)
+#         print(preds)
+#         print(df_prep[i-5:i])
+        
+#         final_df = df_prep[i-5:i].append(preds)
+#         print(final_df)
+#         time.sleep(10)
+#     return "Model Streaming"
+
 
 # AutoArima
 
@@ -133,7 +152,7 @@ def linearRegression_predict():
     # df = pd.read_csv(file)
     dg = DateGen()
     df = dg.date_df(int(days)*24 + int(hours), int(userID))
-    df = linearRegressionClass.preprocess(df,userID)
+    #df = linearRegressionClass.preprocess(df,userID)
     # df = AutoArima.preprocess(df,1)
     preds = linearRegressionClass.predict(df)
     # print(preds)
