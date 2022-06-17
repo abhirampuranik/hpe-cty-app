@@ -41,26 +41,27 @@ def hello_get():
     }
 
 @app.route('/data',methods=['POST'])
-def autoarima_train():
+def data():
     file = request.files['file'] 
     userID = int(request.form['userID'])
     df = pd.read_csv(file)
     df = df[df['UserID'] == userID]
     return df.to_csv(index=False)
 
-@app.route('/stream',methods=['POST'])
-def data():
+@app.route('/stream',methods=['GET'])
+def stream():
     dg = DateGen()
-    file = request.files['file'] 
-    df = pd.read_csv(file)
+    # file = request.files['file'] 
+    df = pd.read_csv("storage_train.csv")
     df_prep = AutoArima.preprocess(df[:50],1)
+    print(df_prep)
     AutoArima.train(df_prep)
     for i in range(50,len(df_prep)):
         AutoArima.update(df[i])
         df = dg.date_df(10,1)
         preds = AutoArima.predict(df)
-        final_df = df[i-5:i] + preds
-        print(final_df)
+        # final_df = df[i-5:i] + preds
+        # print(pred)
         time.sleep(10)
     return "Model Streaming"
 
@@ -68,7 +69,7 @@ def data():
 # AutoArima
 
 @app.route('/autoarima/train',methods=['POST'])
-def data():
+def autoarima_train():
     file = request.files['file']
     userID = request.json['body']['userID']
     df = pd.read_csv(file)

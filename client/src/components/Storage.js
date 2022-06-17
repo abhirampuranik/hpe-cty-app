@@ -10,9 +10,6 @@ import { Input, Button  } from '@mui/material';
 export default function Storage()
 {
 
-    const handleOnChange = (e) => {
-        setFile(e.target.files[0]);        
-    };
 
     const [ListStorage,setListStorage]=useState([]);
     const [storage, setStorage] = useState();
@@ -58,19 +55,6 @@ export default function Storage()
                     </Select>
                 </FormControl>
                 </Box>
-                <div>
-                        <Input 
-                        type='file'
-                        id='csvFileInput'
-                        onChange={handleOnChange}/>
-                        &nbsp;&nbsp;
-                        <Button variant="contained"
-                        onClick={(e) => {
-                            handleOnSubmit(e);
-                        }}
-                        >Import CSV and Plot</Button>
-
-                    </div>
             </div>
 
 
