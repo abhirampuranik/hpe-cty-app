@@ -23,7 +23,7 @@ class AutoArima:
         except:
             df = df.drop(['Time'],axis=1)
             print("no UserID Col")
-        print(df)
+        # print(df)
         return df
 
     def train(df):
@@ -44,8 +44,8 @@ class AutoArima:
         test_size = len(test)
         with open('arima.pkl', 'rb') as pkl:
             prediction = pd.DataFrame(pickle.load(pkl).predict(n_periods=test_size),index=test.index)
-            prediction.columns = ['forecast']
-            print(prediction)
+            prediction.columns = ['Usage']
+            # print(prediction)
             return prediction
 
     def update(df):

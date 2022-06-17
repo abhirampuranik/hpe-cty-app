@@ -53,15 +53,17 @@ def stream():
     dg = DateGen()
     # file = request.files['file'] 
     df = pd.read_csv("storage_train.csv")
-    df_prep = AutoArima.preprocess(df[:50],1)
-    print(df_prep)
-    AutoArima.train(df_prep)
+    df_prep = AutoArima.preprocess(df,1)
+    AutoArima.train(df_prep[:50])
     for i in range(50,len(df_prep)):
-        AutoArima.update(df[i])
+        AutoArima.update(df_prep[i:i+1])
         df = dg.date_df(10,1)
         preds = AutoArima.predict(df)
-        # final_df = df[i-5:i] + preds
-        # print(pred)
+        print(preds)
+        print(df_prep[i-5:i])
+        
+        final_df = df_prep[i-5:i].append(preds)
+        print(final_df)
         time.sleep(10)
     return "Model Streaming"
 
