@@ -108,35 +108,37 @@ def autoarima_predict():
 @app.route('/linearRegression/train',methods=['POST'])
 def linearRegression_train():
     file = request.files['file']
-    #userID = int(request.form['userID'])
+    userID = int(request.form['userID'])
     df = pd.read_csv(file)
     #df = linearRegressionClass.preprocess(df[df['UserID'] == userID] )
-    df = linearRegressionClass.preprocess(df)
+    df = linearRegressionClass.preprocess(df,userID)
     linearRegressionClass.train(df)
     return "Model Trained Successfully"   
 
 @app.route('/linearRegression/update',methods=['POST'])
 def linearRegression_update():
     file = request.files['file']
-    #userID = int(request.form['userID'])
+    userID = int(request.form['userID'])
     df = pd.read_csv(file)
     #df = linearRegressionClass.preprocess(df[df['UserID'] == userID])
-    df = linearRegressionClass.preprocess(df)
+    df = linearRegressionClass.preprocess(df,userID)
     linearRegressionClass.update(df)
     return "Updated Model Successfully"  
 
 @app.route('/linearRegression/predict',methods=['POST'])
 def linearRegression_predict():
-    # file = request.files['file'] 
-    # #userID = int(request.form['userID'])
+    days = request.json['body']['days']
+    hours = request.json['body']['hours']
+    userID = request.json['body']['userID']
     # df = pd.read_csv(file)
-    # #df = linearRegressionClass.preprocess(df[df['UserID'] == userID])
-    # df = linearRegressionClass.preprocess(df)
-    # preds = linearRegressionClass.predict(df[:50])
-    # # print(preds)
-    # response=preds
-    # return response.to_csv()  
-
+    dg = DateGen()
+    df = dg.date_df(int(days)*24 + int(hours), int(userID))
+    df = linearRegressionClass.preprocess(df,userID)
+    # df = AutoArima.preprocess(df,1)
+    preds = linearRegressionClass.predict(df)
+    # print(preds)
+    response=preds
+    return response.to_csv()    
 
 # Random Forest
 
