@@ -71,7 +71,7 @@ def stream():
 @app.route('/autoarima/train',methods=['POST'])
 def autoarima_train():
     file = request.files['file']
-    userID = request.json['body']['userID']
+    userID = int(request.form['userID'])
     df = pd.read_csv(file)
     df = AutoArima.preprocess(df,userID)
     AutoArima.train(df)
@@ -80,7 +80,7 @@ def autoarima_train():
 @app.route('/autoarima/update',methods=['POST'])
 def autoarima_update():
     file = request.files['file'] 
-    userID = request.json['body']['userID']
+    userID = int(request.form['userID'])
     df = pd.read_csv(file)
     df = AutoArima.preprocess(df,userID)
     AutoArima.update(df)
@@ -106,7 +106,7 @@ def autoarima_predict():
 @app.route('/linearRegression/train',methods=['POST'])
 def linearRegression_train():
     file = request.files['file']
-    userID = request.json['body']['userID']
+    userID = int(request.form['userID'])
     df = pd.read_csv(file)
     df = linearRegressionClass.preprocess(df[df['UserID'] == userID] )
     test = linearRegressionClass.train(df)
@@ -121,17 +121,19 @@ def linearRegression_train():
 
 @app.route('/linearRegression/update',methods=['POST'])
 def linearRegression_update():
-    file = request.files['file'] 
+    file = request.files['file']
+    userID = int(request.form['userID'])
     df = pd.read_csv(file)
-    df = linearRegressionClass.preprocess(df)
+    df = linearRegressionClass.preprocess(df[df['UserID'] == userID])
     linearRegressionClass.update(df)
     return "Updated Model Successfully"  
 
 @app.route('/linearRegression/predict',methods=['POST'])
 def linearRegression_predict():
     file = request.files['file'] 
+    userID = int(request.form['userID'])
     df = pd.read_csv(file)
-    df = linearRegressionClass.preprocess(df)
+    df = linearRegressionClass.preprocess(df[df['UserID'] == userID])
     preds = linearRegressionClass.predict(df[:50])
     # print(preds)
     response=preds

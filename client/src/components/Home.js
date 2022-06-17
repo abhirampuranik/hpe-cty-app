@@ -191,14 +191,15 @@ export default function HomePage() {
         if(model === 'autoarima'){
 
             if(action === 'train'){
-                axios.post('http://127.0.0.1:5000/autoarima/train', formData, {
-                headers: {
-                'Content-Type': 'multipart/form-data'
-                },
-                body:{
-                    'userID':userID
-                } 
-                } )
+                axios.post('http://127.0.0.1:5000/autoarima/train', formData, 
+                    {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                    body:{
+                        'userID':userID
+                    } 
+                })
                 .then(function (response) { 
                     console.log(response.data);
                     setpredcsv(response.data);
