@@ -13,7 +13,7 @@ class linearRegressionClass:
 		df.index.freq = 'MS'
 		#df.tail()
 		# df.columns = ['Usage']
-		df.plot(figsize=(12,8))
+		#df.plot(figsize=(12,8))
 
 		df['Usage_LastMonth']=df['Usage'].shift(+1)
 		df['Usage_2Monthsback']=df['Usage'].shift(+2)
@@ -21,7 +21,7 @@ class linearRegressionClass:
         #df
 		
 		df=df.dropna()
-		#df
+		print(df)
 		return df
 
 	def train(df):    

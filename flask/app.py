@@ -106,38 +106,34 @@ def autoarima_predict():
 @app.route('/linearRegression/train',methods=['POST'])
 def linearRegression_train():
     file = request.files['file']
-    userID = int(request.form['userID'])
+    #userID = int(request.form['userID'])
     df = pd.read_csv(file)
-    df = linearRegressionClass.preprocess(df[df['UserID'] == userID] )
-    test = linearRegressionClass.train(df)
-    preds = linearRegressionClass.predict(test)
-    print(preds)
-    response=preds
-    return response.to_csv()
-    # preds = linearRegressionClass.model(df)
-    # print(preds)
-    # response = preds
-    # return response.to_csv()
+    #df = linearRegressionClass.preprocess(df[df['UserID'] == userID] )
+    df = linearRegressionClass.preprocess(df)
+    linearRegressionClass.train(df)
+    return "Model Trained Successfully"   
 
 @app.route('/linearRegression/update',methods=['POST'])
 def linearRegression_update():
     file = request.files['file']
-    userID = int(request.form['userID'])
+    #userID = int(request.form['userID'])
     df = pd.read_csv(file)
-    df = linearRegressionClass.preprocess(df[df['UserID'] == userID])
+    #df = linearRegressionClass.preprocess(df[df['UserID'] == userID])
+    df = linearRegressionClass.preprocess(df)
     linearRegressionClass.update(df)
     return "Updated Model Successfully"  
 
 @app.route('/linearRegression/predict',methods=['POST'])
 def linearRegression_predict():
-    file = request.files['file'] 
-    userID = int(request.form['userID'])
-    df = pd.read_csv(file)
-    df = linearRegressionClass.preprocess(df[df['UserID'] == userID])
-    preds = linearRegressionClass.predict(df[:50])
-    # print(preds)
-    response=preds
-    return response.to_csv()  
+    # file = request.files['file'] 
+    # #userID = int(request.form['userID'])
+    # df = pd.read_csv(file)
+    # #df = linearRegressionClass.preprocess(df[df['UserID'] == userID])
+    # df = linearRegressionClass.preprocess(df)
+    # preds = linearRegressionClass.predict(df[:50])
+    # # print(preds)
+    # response=preds
+    # return response.to_csv()  
 
 
 # Random Forest
