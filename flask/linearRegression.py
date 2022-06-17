@@ -41,7 +41,7 @@ class linearRegressionClass:
 
 		lin_model.fit(X_train,y_train) 
 		with open('LinearRegression.pkl', 'wb') as pkl:
-		    pickle.dump(lin_model, pkl)
+			pickle.dump(lin_model, pkl)
 		return X_test 
 
 	def predict(test):

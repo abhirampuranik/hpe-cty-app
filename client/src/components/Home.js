@@ -141,7 +141,7 @@ export default function HomePage() {
         axios.post('http://127.0.0.1:5000/data', formData,
         {
         headers: {
-        'Content-Type': 'multipart/form-data'
+            'Content-Type': 'multipart/form-data'
         },
         body:{
             'userID':userID
@@ -186,6 +186,7 @@ export default function HomePage() {
         const formData = new FormData();
 
         formData.append("file", file1);
+        formData.append("userID", userID)
 
         if(model === 'autoarima'){
 
@@ -193,7 +194,10 @@ export default function HomePage() {
                 axios.post('http://127.0.0.1:5000/autoarima/train', formData, {
                 headers: {
                 'Content-Type': 'multipart/form-data'
-                }
+                },
+                body:{
+                    'userID':userID
+                } 
                 } )
                 .then(function (response) { 
                     console.log(response.data);
@@ -223,7 +227,10 @@ export default function HomePage() {
                 axios.post('http://127.0.0.1:5000/autoarima/update', formData, {
                 headers: {
                 'Content-Type': 'multipart/form-data'
-                }
+                },
+                body:{
+                    'userID':userID
+                } 
                 } )
                 .then(function (response) { 
                     console.log(response.data);
@@ -274,8 +281,59 @@ export default function HomePage() {
                 setProcessed(true);
             })
 
-        }else{
+        }else if(model === 'linearregression'){
 
+            if(action === 'train'){
+                axios.post('http://127.0.0.1:5000/linearRegression/train', formData, {
+                headers: {
+                'Content-Type': 'multipart/form-data'
+                },
+                body:{
+                    'userID':userID
+                } 
+                } )
+                .then(function (response) { 
+                    console.log(response.data);
+                    setpredcsv(response.data);
+                    setProcessing(false);
+                    setProcessed(true);
+                    setOpen({open:true});
+                })
+            }else if(action === 'predict'){
+                axios.post('http://127.0.0.1:5000/linearRegression/predict', {
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body:{
+                    "days": nextDays,
+                    "hours":nextHours,
+                    "userID": userID
+                }
+                } )
+                .then(function (response) { 
+                    console.log(response.data);
+                    setpredcsv(response.data);
+                    setProcessing(false);
+                    setProcessed(true);
+                })
+            }else{
+                axios.post('http://127.0.0.1:5000/linearRegression/update', formData, {
+                headers: {
+                'Content-Type': 'multipart/form-data'
+                },
+                body:{
+                    'userID':userID
+                } 
+                } )
+                .then(function (response) { 
+                    console.log(response.data);
+                    setpredcsv(response.data);
+                    setProcessing(false);
+                    setProcessed(true);
+                    setOpen({open:true});
+                })
+            }
+            
         }
 
         
@@ -356,6 +414,7 @@ export default function HomePage() {
                         <MenuItem value={'autoarima'}>AutoArima</MenuItem>
                         <MenuItem value={'prophet'}>Prophet</MenuItem>
                         <MenuItem value={'rnn'}>RNN</MenuItem>
+                        <MenuItem value={'linearregression'}>Linear Regression</MenuItem>
                         <MenuItem value={'mlmodels'}>ML Models</MenuItem>
                         </Select>
                     </FormControl>
@@ -386,7 +445,7 @@ export default function HomePage() {
                     
                 <br/>
                 
-                {model==='autoarima'?
+                {model==='autoarima' || model==='linearregression'?
                     <FormControl>
                     <FormLabel id="demo-row-radio-buttons-group-label">Action</FormLabel>
                     <RadioGroup
@@ -407,14 +466,11 @@ export default function HomePage() {
                     :<span></span>
                 }
 
-                {action === 'predict' && model === 'autoarima'?
+                {action === 'predict' && (model === 'autoarima' || model==='linearregression')?
                     <div>
                         <br/>
                         <div style={{alignItems:'center',justifyContent:'center', width:150, margin:'0px auto'}}>
-                            <table>
-                                <tr>
-                                <td>
-                                <Box justify = "center">
+                                <Box justify = "center" sx={{margin:'15px auto'}}>
                                 <FormControl fullWidth>
                                     <InputLabel id="demo-simple-select-label">Days</InputLabel>
                                     <Select
@@ -433,10 +489,7 @@ export default function HomePage() {
                                     </Select>
                                 </FormControl>
                             </Box>
-                            </td>
-                            {/* <br/> */}
-                            <td>
-                            <Box justify = "center">
+                            <Box justify = "center" sx={{margin:'15px auto'}}>
                                 <FormControl fullWidth>
                                     <InputLabel id="demo-simple-select-label">Hours</InputLabel>
                                     <Select
@@ -453,9 +506,7 @@ export default function HomePage() {
                                     </Select>
                                 </FormControl>
                             </Box>
-                            </td>
-                                </tr>
-                            </table>                            
+
                         </div>
 
 
