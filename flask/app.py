@@ -48,6 +48,21 @@ def autoarima_train():
     df = df[df['UserID'] == userID]
     return df.to_csv(index=False)
 
+@app.route('/stream',methods=['POST'])
+def data():
+    dg = DateGen()
+    file = request.files['file'] 
+    df = pd.read_csv(file)
+    df_prep = AutoArima.preprocess(df[:50],1)
+    AutoArima.train(df_prep)
+    for i in range(50,len(df_prep)):
+        AutoArima.update(df[i])
+        df = dg.date_df(10,1)
+        preds = AutoArima.predict(df)
+        final_df = df[i-5:i] + preds
+        print(final_df)
+        time.sleep(10)
+    return "Model Streaming"
 
 
 # AutoArima
