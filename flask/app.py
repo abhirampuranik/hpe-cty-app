@@ -11,6 +11,7 @@ from xgb import XGBClass
 from multinomialNaiveBayes import MultinomialNaiveBayesClass
 # from ProphetAPI import ProphetClass
 from dateGen import DateGen
+from dateGenML import DateGenML
 # from rnn import Rnn
 # from ML import MLModelsClass
 from flask import Flask, flash, request, redirect, url_for, session
@@ -131,7 +132,8 @@ def linearRegression_train():
     df = pd.read_csv(file)
     #df = linearRegressionClass.preprocess(df[df['UserID'] == userID] )
     df = linearRegressionClass.preprocess(df,userID)
-    linearRegressionClass.train(df)
+    #linearRegressionClass.train(df)
+    linearRegressionClass.predict(df)
     return "Model Trained Successfully"   
 
 @app.route('/linearRegression/update',methods=['POST'])
@@ -150,9 +152,15 @@ def linearRegression_predict():
     hours = request.json['body']['hours']
     userID = request.json['body']['userID']
     # df = pd.read_csv(file)
-    dg = DateGen()
-    df = dg.date_df(int(days)*24 + int(hours), int(userID))
-    #df = linearRegressionClass.preprocess(df,userID)
+    dg = DateGenML()
+    msg = dg.date_df(int(days)*24 + int(hours), int(userID))    
+    print(msg)
+    print("initial data")
+    df=pd.read_csv('LR_Predict.csv')
+    print(df)
+    df = linearRegressionClass.preprocess(df,userID)
+    print("processed data")
+    print(df)
     # df = AutoArima.preprocess(df,1)
     preds = linearRegressionClass.predict(df)
     # print(preds)
