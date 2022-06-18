@@ -83,8 +83,8 @@ class linearRegressionClass:
 			#lin_pred=lin_model.predict(X_test)
     		#print("Linear_Regression_Predictions")
     		#test['Linear_Regression_Predictions']=lin_pred
-			prediction.columns = ['prediction']
-			print(prediction)
+			prediction.columns = ['Usage']
+			print(df)
 			return prediction
 
 	def update(df):

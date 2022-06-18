@@ -130,10 +130,13 @@ def linearRegression_train():
     file = request.files['file']
     userID = int(request.form['userID'])
     df = pd.read_csv(file)
+    print("initial")
+    print(df)
     #df = linearRegressionClass.preprocess(df[df['UserID'] == userID] )
     df = linearRegressionClass.preprocess(df,userID)
-    #linearRegressionClass.train(df)
-    linearRegressionClass.predict(df)
+    print("after preprocess")
+    print(df)
+    linearRegressionClass.train(df)
     return "Model Trained Successfully"   
 
 @app.route('/linearRegression/update',methods=['POST'])
@@ -151,6 +154,7 @@ def linearRegression_predict():
     days = request.json['body']['days']
     hours = request.json['body']['hours']
     userID = request.json['body']['userID']
+    #userID = int(request.form['userID'])
     # df = pd.read_csv(file)
     dg = DateGenML()
     msg = dg.date_df(int(days)*24 + int(hours), int(userID))    
@@ -158,8 +162,8 @@ def linearRegression_predict():
     print("initial data")
     df=pd.read_csv('LR_Predict.csv')
     print(df)
-    df = linearRegressionClass.preprocess(df,userID)
-    print("processed data")
+    df = linearRegressionClass.preprocess(df,1)
+    print("after preprocess")
     print(df)
     # df = AutoArima.preprocess(df,1)
     preds = linearRegressionClass.predict(df)
