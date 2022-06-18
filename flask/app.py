@@ -270,8 +270,9 @@ def xgb_predict():
 @app.route('/prophet',methods=['POST'])
 def prophet():
     # file = request.files['file'] 
+    # userID = int(request.form['userID'])
     # df = pd.read_csv(file)
-    # df = ProphetClass.preprocess(df)
+    # df = ProphetClass.preprocess(df, userID)
     # test = ProphetClass.train(df)
     # preds = ProphetClass.predict(test)
     # print(preds)

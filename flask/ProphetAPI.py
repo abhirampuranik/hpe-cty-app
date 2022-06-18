@@ -17,9 +17,9 @@ class ProphetClass:
     def __init__():
         pass
     
-    def preprocess(df):
+    def preprocess(df, userID):
         dataset = df
-        df_User1 = dataset[dataset['UserID']==1]
+        df_User1 = dataset[dataset['UserID']==userID]
         df = df_User1
         df = df.rename(columns={'Usage': 'y', 'Time': 'ds'})
         df.drop('UserID', inplace=True, axis=1)
