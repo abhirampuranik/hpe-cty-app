@@ -8,14 +8,14 @@ class DateGen:
         pass
 
     def date_df(self,hr,uID,initTime):
-        initTime = initTime.split(".")[0]
         print(initTime)
+        initTime = initTime.split(".")[0]
+        print("here "+initTime)
         dt_tuple=tuple([int(x) for x in initTime[:10].split('-')])+tuple([int(x) for x in initTime[11:].split(':')])
         initTime = datetime(*dt_tuple)
         time_t = []
         u_id = []
         for i in range(hr):
-            # print(datetime.now())
             time_t.append(initTime + timedelta( hours=i ))
             u_id.append(uID)
         df = pd.DataFrame({'Time':time_t,'UserID':u_id})
@@ -23,5 +23,3 @@ class DateGen:
         df = df.drop(['Time'],axis=1)
         return df
 
-# dg = DateGen()
-# print(dg.date_df(5,1))

@@ -68,11 +68,8 @@ def stream():
     AutoArima.train(df_prep[:50])
     for i in range(50,len(df_prep)):
         AutoArima.update(df_prep[i:i+1])
-        # print(df_prep)
         df = dg.date_df(10,1,df_prep.index[i])
         preds = AutoArima.predict(df)
-        # print(preds)
-        # print(df_prep[i-5:i])
         final_df = df_prep[45:i].append(preds)
         print(len(final_df))
         print(final_df)
@@ -124,12 +121,11 @@ def autoarima_predict():
     days = request.json['body']['days']
     hours = request.json['body']['hours']
     userID = request.json['body']['userID']
-    # df = pd.read_csv(file)
     dg = DateGen()
-    df = dg.date_df(int(days)*24 + int(hours), int(userID))
-    # df = AutoArima.preprocess(df,1)
+    fil = open('arima.txt','r')
+    df = dg.date_df(int(days)*24 + int(hours), int(userID),fil.readline().strip())
+    fil.close()
     preds = AutoArima.predict(df)
-    # print(preds)
     response=preds
     return response.to_csv()
 
