@@ -3,22 +3,15 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 import pickle
+# from sklearn.metrics import mean_squared_error
+# from math import sqrt
 
 class linearRegressionClass:
 	def __init__():
 		pass 
 
-	def preprocess(df,UserID):
-		#df = df.loc[:, ~df.columns.str.contains('^Unnamed')]   
-		# df=pd.DataFrame()
-		# df = pd.read_csv(dataset,index_col='Time',parse_dates=True)
-		#df = dataset 
+	def preprocess(df,UserID):		 
 		df.index = df['Time']
-		#df.index.freq = 'MS'
-		#df.tail()
-		# df.columns = ['Usage']
-		#df.plot(figsize=(12,8))
-
 		df['Usage_LastHour']=df['Usage'].shift(+1)
 		df['Usage_2Hoursback']=df['Usage'].shift(+2)
 		df['Usage_3Hoursback']=df['Usage'].shift(+3)
@@ -28,16 +21,8 @@ class linearRegressionClass:
  			df = df.drop(['Time','UserID'],axis=1)
 		except:
  			df = df.drop(['Time'],axis=1)
- 			print("no UserID Col")
-        
-        #print("reached")
+ 			print("no UserID Col")     
 		print(df.head())
-
-		# x1,x2,x3,y=df['Usage_LastHour'],df['Usage_2Hoursback'],df['Usage_3Hoursback'],df['Usage']
-		# x1,x2,x3,y=np.array(x1),np.array(x2),np.array(x3),np.array(y)
-		# x1,x2,x3,y=x1.reshape(-1,1),x2.reshape(-1,1),x3.reshape(-1,1),y.reshape(-1,1)
-		# final_x=np.concatenate((x1,x2,x3),axis=1)
-
 		return df
 
 	def train(df):  	
@@ -46,56 +31,31 @@ class linearRegressionClass:
 		x1,x2,x3,y=np.array(x1),np.array(x2),np.array(x3),np.array(y)
 		x1,x2,x3,y=x1.reshape(-1,1),x2.reshape(-1,1),x3.reshape(-1,1),y.reshape(-1,1)
 		final_x=np.concatenate((x1,x2,x3),axis=1)		
-
-		# test_ind = len(df) - 30
-		# train = df.iloc[:test_ind]
-		# test = df.iloc[test_ind:]
+		train = df.iloc[:-120]
 		X_train,y_train=final_x[:-120],y[:-120]		
-		#X_train,X_test,y_train,y_test=final_x,final_x,y,y
-		#X_train,X_test,y_train,y_test=df[:-30],df[-30:],df[:-30],df[-30:]
-
 		lin_model.fit(X_train,y_train) 
 		with open('LinearRegression.pkl', 'wb') as pkl:
 			pickle.dump(lin_model, pkl)
-		#return X_test 
-
-	# def predict(test):
-	# 	test_size = len(test)
-	# 	with open('LinearRegression.pkl', 'rb') as pkl:
-	# 		#prediction = pd.DataFrame(pickle.load(pkl).predict(n_periods=test_size),index=test.index)
-	# 		prediction = pd.DataFrame(pickle.load(pkl).predict(test_size),index=test.index)
-	# 		prediction.columns = ['Usage']
-	# 		print(prediction)
-	# 		return prediction
-
+		
 	def predict(df,hrs):
-		#test_size = len(test)
+		#lin_model=LinearRegression()
 		x1,x2,x3,y=df['Usage_LastHour'],df['Usage_2Hoursback'],df['Usage_3Hoursback'],df['Usage']
 		x1,x2,x3,y=np.array(x1),np.array(x2),np.array(x3),np.array(y)
 		x1,x2,x3,y=x1.reshape(-1,1),x2.reshape(-1,1),x3.reshape(-1,1),y.reshape(-1,1)
 		final_x=np.concatenate((x1,x2,x3),axis=1)	
-
+		train = df.iloc[:-120]
+		test = df.iloc[-120:-120+hrs]		
 		X_train,X_test,y_train,y_test=final_x[:-120],final_x[-120:-120+hrs],y[:-120],y[-120:-120+hrs]
-		#X_train,X_test,y_train,y_test=final_x,final_x,y,y	
-
+		#lin_model.fit(X_train,y_train) 
 		with open('LinearRegression.pkl', 'rb') as pkl:
-			#prediction = pd.DataFrame(pickle.load(pkl).predict(n_periods=test_size),index=test.index)
-			prediction = pd.DataFrame(pickle.load(pkl).predict(X_test))
+			#prediction = pd.DataFrame(pickle.load(pkl).predict(X_test))
+			prediction = pickle.load(pkl).predict(X_test)
+			# print(prediction)
 			#lin_pred=lin_model.predict(X_test)
-    		#print("Linear_Regression_Predictions")
-    		#test['Linear_Regression_Predictions']=lin_pred
-			#prediction.columns = ['Usage']
-			# print(type(prediction))
-			# print(type(df['Usage']))
-			# prediction=np.array(prediction)
-			# prediction=prediction.reshape(-1,1)
-			# print(df['Usage'][-120:-120+hrs])
-			# df['Usage'].iloc[-120:-120+hrs]=prediction
-			# df['prediction']=prediction
-			prediction.columns = ['Usage']
-			print(prediction)
-			# print(df['Usage'][-120:-120+hrs])
-			return prediction
+			print("Linear_Regression_Predictions")
+			test['Linear_Regression_Predictions']=prediction
+			print(test)
+			return test
 
 	def update(df):
 		lin_model=LinearRegression()
