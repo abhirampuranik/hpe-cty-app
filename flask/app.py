@@ -58,11 +58,13 @@ def stream():
     AutoArima.train(df_prep[:50])
     for i in range(50,len(df_prep)):
         AutoArima.update(df_prep[i:i+1])
-        df = dg.date_df(10,1)
+        # print(df_prep)
+        df = dg.date_df(10,1,df_prep.index[i])
         preds = AutoArima.predict(df)
         # print(preds)
         # print(df_prep[i-5:i])
-        final_df = df_prep[i-5:i].append(preds)
+        final_df = df_prep[45:i].append(preds)
+        print(len(final_df))
         print(final_df)
         time.sleep(10)
     return "Model Streaming"
