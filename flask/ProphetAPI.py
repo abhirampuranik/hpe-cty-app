@@ -18,13 +18,6 @@ class ProphetClass:
         pass
     
     def preprocess(df, userID):
-        #dataset = df
-        #df_User1 = dataset[dataset['UserID']==userID]
-        #df = df_User1
-        #df = df.rename(columns={'Usage': 'y', 'Time': 'ds'})
-        #df.drop('UserID', inplace=True, axis=1)
-        #df['ds']= to_datetime(df['ds'])
-        #return df
         dataset = df
         if(userID in set(dataset['UserID'])):
           df_User1 = dataset[dataset['UserID']==userID]
