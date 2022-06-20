@@ -18,13 +18,28 @@ class ProphetClass:
         pass
     
     def preprocess(df, userID):
+        #dataset = df
+        #df_User1 = dataset[dataset['UserID']==userID]
+        #df = df_User1
+        #df = df.rename(columns={'Usage': 'y', 'Time': 'ds'})
+        #df.drop('UserID', inplace=True, axis=1)
+        #df['ds']= to_datetime(df['ds'])
+        #return df
         dataset = df
-        df_User1 = dataset[dataset['UserID']==userID]
-        df = df_User1
-        df = df.rename(columns={'Usage': 'y', 'Time': 'ds'})
-        df.drop('UserID', inplace=True, axis=1)
-        df['ds']= to_datetime(df['ds'])
-        return df
+        if(userID in set(dataset['UserID'])):
+          df_User1 = dataset[dataset['UserID']==userID]
+          df1 = df_User1
+          df1 = df1.rename(columns={'Usage': 'y', 'Time': 'ds'})
+          df1.drop('UserID', inplace=True, axis=1)
+          #print("UserID exists!\n",df1)
+        else:
+          df2 = dataset 
+          df2 = df2.rename(columns={'Usage': 'y', 'Time': 'ds'})
+          df2.drop('UserID', inplace=True, axis=1)
+          df1 = df2
+          #print("UserID does not exist!\n",df1)
+        df1['ds']= to_datetime(df1['ds'])
+        return df1
 
     def train(df):
         test_size = 50
