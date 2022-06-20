@@ -68,11 +68,8 @@ def stream():
     AutoArima.train(df_prep[:50])
     for i in range(50,len(df_prep)):
         AutoArima.update(df_prep[i:i+1])
-        # print(df_prep)
         df = dg.date_df(10,1,df_prep.index[i])
         preds = AutoArima.predict(df)
-        # print(preds)
-        # print(df_prep[i-5:i])
         final_df = df_prep[45:i].append(preds)
         print(len(final_df))
         print(final_df)
@@ -124,12 +121,11 @@ def autoarima_predict():
     days = request.json['body']['days']
     hours = request.json['body']['hours']
     userID = request.json['body']['userID']
-    # df = pd.read_csv(file)
     dg = DateGen()
-    df = dg.date_df(int(days)*24 + int(hours), int(userID))
-    # df = AutoArima.preprocess(df,1)
+    fil = open('arima.txt','r')
+    df = dg.date_df(int(days)*24 + int(hours), int(userID),fil.readline().strip())
+    fil.close()
     preds = AutoArima.predict(df)
-    # print(preds)
     response=preds
     return response.to_csv()
 
@@ -268,18 +264,29 @@ def xgb_predict():
 
 # Prophet
 
-@app.route('/prophet',methods=['POST'])
-def prophet():
-    # file = request.files['file'] 
-    # userID = int(request.form['userID'])
-    # df = pd.read_csv(file)
-    # df = ProphetClass.preprocess(df, userID)
-    # test = ProphetClass.train(df)
-    # preds = ProphetClass.predict(test)
-    # print(preds)
-    # response = preds
-    # return response.to_csv()
-    return 'prophet'
+@app.route('/prophet/train',methods=['POST'])
+def prophet_train():
+      file = request.files['file'] 
+      userID = int(request.form['userID'])
+      df = pd.read_csv(file)
+      df = ProphetClass.preprocess(df, userID)
+      ProphetClass.train(df)
+      return 'Prophet trained'
+
+@app.route('/prophet/predict',methods=['POST'])
+def prophet_predict():
+      days = request.json['body']['days']
+      hours = request.json['body']['hours']
+      userID = request.json['body']['userID']
+      #df = ProphetClass.preprocess(df, userID)
+      #test = ProphetClass.train(df)
+      dg = DateGenP()
+      test = dg.date_df(int(days)*24 + int(hours), int(userID))
+      test = test.rename(columns = {'Time': 'ds'})
+      preds = ProphetClass.predict(test)
+      #print(preds)
+      response = preds
+      return response.to_csv()
 
 # RNN
 

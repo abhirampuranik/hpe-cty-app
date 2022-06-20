@@ -10,12 +10,6 @@ class AutoArima:
     
     def preprocess(df,UserID):
         df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
-        # df_User1 = df[df['UserID']==1]
-        # df_User1.index = df_User1['Time']
-        # df = df_User1.drop(['Time','UserID'],axis=1)
-        
-        # df_User1 = df[df['UserID']==1]
-        # print(UserID)
         df.index = df['Time']
         try:
             df = df[df["UserID"]==UserID]
@@ -23,7 +17,6 @@ class AutoArima:
         except:
             df = df.drop(['Time'],axis=1)
             print("no UserID Col")
-        # print(df)
         return df
 
     def train(df):
@@ -39,13 +32,15 @@ class AutoArima:
         arima_model.summary()
         with open('arima.pkl', 'wb') as pkl:
             pickle.dump(arima_model, pkl)
+        last_date = train.index[-1]
+        with open('arima.txt','w') as fil:
+            fil.write(last_date)
     
     def predict(test):
         test_size = len(test)
         with open('arima.pkl', 'rb') as pkl:
             prediction = pd.DataFrame(pickle.load(pkl).predict(n_periods=test_size),index=test.index)
             prediction.columns = ['Usage']
-            # print(prediction)
             return prediction
 
     def update(df):
@@ -53,9 +48,6 @@ class AutoArima:
             arima_model = pickle.load(pkl).update(df)
             with open('arima.pkl', 'wb') as pkl:
                 pickle.dump(arima_model, pkl)
-
-# df = pd.read_csv('../test_data/storage.csv')
-# df = AutoArima.preprocess(df,1)
-# test = df[:-50]
-# test = AutoArima.train(test[:25])
-# update = AutoArima.update(df[25:])
+        last_date = df.index[-1]
+        with open('arima.txt','w') as fil:
+            fil.write(last_date)
