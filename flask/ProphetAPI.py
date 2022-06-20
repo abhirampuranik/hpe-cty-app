@@ -42,7 +42,7 @@ class ProphetClass:
         return df1
 
     def train(df):
-        test_size = 50
+        test_size = int(len(df)*0.2)
         test_ind = len(df) - test_size
         train = df.iloc[:test_ind]
         test = df.iloc[test_ind:]
@@ -54,7 +54,7 @@ class ProphetClass:
         return test
     
     def predict(test):
-        test_size = 50
+        test_size = len(test)
         with open('prophet.pkl', 'rb') as pkl:
             prophet_model = pickle.load(pkl)
             future = test['ds']

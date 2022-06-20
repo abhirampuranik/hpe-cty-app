@@ -60,9 +60,8 @@ def stream():
         AutoArima.update(df_prep[i:i+1])
         df = dg.date_df(10,1)
         preds = AutoArima.predict(df)
-        print(preds)
-        print(df_prep[i-5:i])
-        
+        # print(preds)
+        # print(df_prep[i-5:i])
         final_df = df_prep[i-5:i].append(preds)
         print(final_df)
         time.sleep(10)
