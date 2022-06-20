@@ -314,7 +314,7 @@ def rnn_predict():
     hours = request.json['body']['hours']
     userID = request.json['body']['userID']
     #file = request.files['file']
-    df = pd.read_csv('Seasonal.csv')
+    df = pd.read_csv('newSeasonal.csv')
     hrs=int(days)*24 + int(hours)
     df = Rnn.preprocess(df,int(userID))
     preds = Rnn.predict(df,hrs)
