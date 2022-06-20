@@ -12,7 +12,7 @@ from multinomialNaiveBayes import MultinomialNaiveBayesClass
 # from ProphetAPI import ProphetClass
 from dateGen import DateGen
 from dateGenML import DateGenML
-# from rnn import Rnn
+from rnn import Rnn
 # from ML import MLModelsClass
 from flask import Flask, flash, request, redirect, url_for, session
 from werkzeug.utils import secure_filename
@@ -164,9 +164,8 @@ def linearRegression_predict():
     hrs=int(days)*24 + int(hours)
     df = linearRegressionClass.preprocess(df,int(userID))
     preds = linearRegressionClass.predict(df,hrs)
-    response=preds
-    #response.index=False
-    print(response)   
+    #linearRegressionClass.update(df,hrs)
+    response=preds       
     return response.to_csv(index=False)    
 
 # Random Forest
@@ -284,16 +283,37 @@ def prophet():
 
 # RNN
 
-@app.route('/rnn',methods=['POST'])
-def rnn():
-    file = request.files['file'] 
-    df = pd.read_csv(file)
-    preds = Rnn.model(df)
-    print(preds)
-    response = preds
-    return response.to_csv()
-    # return "rnn"
+@app.route('/rnn/train',methods=['POST'])
+def rnn_train():
+    file = request.files['file']
+    userID = int(request.form['userID'])
+    df = pd.read_csv(file)    
+    df = Rnn.preprocess(df,userID)
+    Rnn.train(df)
+    return "Model Trained Successfully" 
 
+@app.route('/rnn/update',methods=['POST'])
+def rnn_update():
+    # file = request.files['file']
+    # userID = int(request.form['userID'])
+    # df = pd.read_csv(file)
+    # df = linearRegressionClass.preprocess(df,userID)
+    # linearRegressionClass.update(df)
+    return "Updated Model Successfully"
+
+@app.route('/rnn/predict',methods=['POST'])
+def rnn_predict():
+    days = request.json['body']['days']
+    hours = request.json['body']['hours']
+    userID = request.json['body']['userID']
+    #file = request.files['file']
+    df = pd.read_csv('Seasonal.csv')
+    hrs=int(days)*24 + int(hours)
+    df = Rnn.preprocess(df,int(userID))
+    preds = Rnn.predict(df,hrs)
+    #Rnn.update(df,hrs)
+    response=preds       
+    return response.to_csv(index=False)   
 
 # ML Models
 
