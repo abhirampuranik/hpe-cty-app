@@ -129,7 +129,7 @@ def autoarima_predict():
 def linearRegression_train():
     file = request.files['file']
     userID = int(request.form['userID'])
-    df = pd.read_csv(file)
+    df = pd.read_csv(file)    
     df = linearRegressionClass.preprocess(df,userID)
     linearRegressionClass.train(df)
     return "Model Trained Successfully"   
@@ -154,7 +154,9 @@ def linearRegression_predict():
     df = linearRegressionClass.preprocess(df,int(userID))
     preds = linearRegressionClass.predict(df,hrs)
     response=preds
-    return response.to_csv()    
+    #response.index=False
+    print(response)   
+    return response.to_csv(index=False)    
 
 # Random Forest
 
