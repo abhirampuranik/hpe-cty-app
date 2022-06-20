@@ -49,6 +49,16 @@ def data():
     df = df[df['UserID'] == userID]
     return df.to_csv(index=False)
 
+@app.route('/datalinearreg',methods=['POST'])
+def dataLinearReg():
+    file = request.files['file'] 
+    userID = int(request.form['userID'])
+    df = pd.read_csv(file)
+    df = df[df['UserID'] == userID]
+    df = df[:-120]
+    return df.to_csv(index=False)
+
+
 @app.route('/stream',methods=['GET'])
 def stream():
     dg = DateGen()

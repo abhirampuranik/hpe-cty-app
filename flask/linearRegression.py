@@ -17,11 +17,11 @@ class linearRegressionClass:
 		df['Usage_3Hoursback']=df['Usage'].shift(+3)
 		df=df.dropna()
 		try:
- 			df = df[df["UserID"]==UserID]
- 			df = df.drop(['Time','UserID'],axis=1)
+			df = df[df["UserID"]==UserID]
+			df = df.drop(['Time','UserID'],axis=1)
 		except:
- 			df = df.drop(['Time'],axis=1)
- 			print("no UserID Col")     
+			df = df.drop(['Time'],axis=1)
+			print("no UserID Col")     
 		print(df.head())
 		return df
 

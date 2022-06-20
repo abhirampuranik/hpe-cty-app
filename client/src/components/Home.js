@@ -348,6 +348,10 @@ export default function HomePage() {
         // fileReader1.readAsText(predcsv);
     }, [predcsv]);
 
+    useEffect(() => {
+        console.log(List1)
+    }, [List1]);
+
 
 
     useEffect(() => {
@@ -380,8 +384,13 @@ export default function HomePage() {
             setList1(valueList1);
             console.log("output array1 from flask", outputArray1)
             console.log("value list 1",valueList1)
-        }else{
-
+        }else if(model === 'linearregression'){
+            outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[1]])));
+            // outputArray1.map((record)=>(valueList1.push([record.split('  ')[0], record.split('  ')[1].split(',')[0]])));
+            valueList1.unshift([{ type: 'string', label: 'Time' },{label:'Forecast',type:'number'}])
+            setList1(valueList1);
+            console.log("output array1 from flask", outputArray1)
+            console.log("value list 1",valueList1)
         }
         
         
@@ -615,13 +624,13 @@ export default function HomePage() {
 
         <br/>
         
-        {action === 'predict' && model === 'autoarima' && processed?<div><h1>Predictions</h1></div>:<span></span>}
+        {action === 'predict' && (model === 'autoarima' || model === 'linearregression') && processed?<div><h1>Predictions</h1></div>:<span></span>}
         
         
         
 
         <div style={{ alignContent: "center", width: '95%', margin:'auto' }}>
-            {action === 'predict' && model === 'autoarima' && processed?
+            {action === 'predict' && (model === 'autoarima' || model === 'linearregression' ) && processed?
                 <Chart
                 width={'100%'}
                 height={'800px'}
