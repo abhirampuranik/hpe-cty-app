@@ -269,18 +269,29 @@ def xgb_predict():
 
 # Prophet
 
-@app.route('/prophet',methods=['POST'])
-def prophet():
-    # file = request.files['file'] 
-    # userID = int(request.form['userID'])
-    # df = pd.read_csv(file)
-    # df = ProphetClass.preprocess(df, userID)
-    # test = ProphetClass.train(df)
-    # preds = ProphetClass.predict(test)
-    # print(preds)
-    # response = preds
-    # return response.to_csv()
-    return 'prophet'
+@app.route('/prophet/train',methods=['POST'])
+def prophet_train():
+      file = request.files['file'] 
+      userID = int(request.form['userID'])
+      df = pd.read_csv(file)
+      df = ProphetClass.preprocess(df, userID)
+      ProphetClass.train(df)
+      return 'Prophet trained'
+
+@app.route('/prophet/predict',methods=['POST'])
+def prophet_predict():
+      days = request.json['body']['days']
+      hours = request.json['body']['hours']
+      userID = request.json['body']['userID']
+      #df = ProphetClass.preprocess(df, userID)
+      #test = ProphetClass.train(df)
+      dg = DateGenP()
+      test = dg.date_df(int(days)*24 + int(hours), int(userID))
+      test = test.rename(columns = {'Time': 'ds'})
+      preds = ProphetClass.predict(test)
+      #print(preds)
+      response = preds
+      return response.to_csv()
 
 # RNN
 
