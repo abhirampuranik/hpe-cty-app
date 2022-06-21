@@ -138,7 +138,23 @@ export default function HomePage() {
         formData.append("file", file1);
         formData.append("userID", userID)
 
-        if(model === 'rnn' || model === 'linearregression'){
+        // if(model === 'rnn' || model === 'linearregression'){
+        //     axios.post('http://127.0.0.1:5000/data', formData,
+        //     {
+        //     headers: {
+        //         'Content-Type': 'multipart/form-data'
+        //     },
+        //     body:{
+        //         'userID':userID
+        //     } 
+
+        //     })
+        //     .then(function (response) { 
+        //         console.log(response.data);
+        //         setoutputArray(response.data.split('\n'))
+
+        //     })
+        // }else{
             axios.post('http://127.0.0.1:5000/data', formData,
             {
             headers: {
@@ -154,24 +170,8 @@ export default function HomePage() {
                 setoutputArray(response.data.split('\n'))
 
             })
-        }else{
-            axios.post('http://127.0.0.1:5000/datalinearreg', formData,
-            {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            },
-            body:{
-                'userID':userID
-            } 
 
-            })
-            .then(function (response) { 
-                console.log(response.data);
-                setoutputArray(response.data.split('\n'))
-
-            })
-
-        }
+        // }
         
 
 

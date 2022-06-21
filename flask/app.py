@@ -9,11 +9,11 @@ from linearRegression import linearRegressionClass
 from randomForest import randomForestClass
 from xgb import XGBClass 
 from multinomialNaiveBayes import MultinomialNaiveBayesClass
-from ProphetAPI import ProphetClass
+# from ProphetAPI import ProphetClass
 from dateGen import DateGen
 from dateGenML import DateGenML
 from DateGenP import DateGenP
-# from rnn import Rnn
+from rnn import Rnn
 # from ML import MLModelsClass
 from flask import Flask, flash, request, redirect, url_for, session, Response
 from werkzeug.utils import secure_filename
