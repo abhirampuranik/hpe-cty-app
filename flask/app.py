@@ -64,20 +64,19 @@ def stream():
     df = pd.read_csv("storage_train.csv")
     df_prep = AutoArima.preprocess(df,1)
     dg = DateGen()
-    # AutoArima.train(df_prep[:50])
+    AutoArima.train(df_prep[:50])
     def getdata():
         # file = request.files['file'] 
         
         for i in range(50,len(df_prep)):
-            # AutoArima.update(df_prep[i:i+1])
+            AutoArima.update(df_prep[i:i+1])
             df = dg.date_df(5,1,df_prep.index[i])
             preds = AutoArima.predict(df)
             final_df = df_prep[49:i].append(preds)
-            s = final_df.to_csv().replace('\n', '$')
-            print(len(s))
+            s = final_df.to_csv().replace('\r\n', '$')
             #gotcha
             yield f'data: {s} \n\n' 
-            time.sleep(5)
+            time.sleep(1)
             
     response = Response(getdata(), mimetype='text/event-stream')
 

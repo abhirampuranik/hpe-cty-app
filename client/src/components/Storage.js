@@ -7,6 +7,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 // import { Input, Button  } from '@mui/material';
 import Chart from "react-google-charts";
+import { Button } from '@mui/material';
 
 
 export default function Storage()
@@ -15,28 +16,27 @@ export default function Storage()
 
     const [ListStorage,setListStorage]=useState([]);
     const [storage, setStorage] = useState();
-    const [List, setList] = useState();
-    const [predcsv, setpredcsv] = useState("");
-    const [outputArray, setoutputArray] = useState([]);
+    const [List, setList] = useState([]);
 
 
-    const handleChangeOnStorage = (event) => {
-        setStorage(event.target.value);
-    };
+    var valueList = []
+    // const handleChangeOnStorage = (event) => {
+    //     setStorage(event.target.value);
+    // };
 
-    useEffect(()=>{
-        // setListStorage(["Storage1", "Storage2","Storage3","Storage4"])
+    // useEffect(()=>{
+    //     // setListStorage(["Storage1", "Storage2","Storage3","Storage4"])
 
-        axios.get('http://127.0.0.1:5000/liststorages').then(response => {
-          console.log("SUCCESS", response.data.message)
-          setListStorage(response.data.message.split(','))
-        }).catch(error => {
-          console.log(error)
-        })
+    //     axios.get('http://127.0.0.1:5000/liststorages').then(response => {
+    //       console.log("SUCCESS", response.data.message)
+    //       setListStorage(response.data.message.split(','))
+    //     }).catch(error => {
+    //       console.log(error)
+    //     })
 
 
 
-    },[]);
+    // },[]);
 
 
 
@@ -45,37 +45,41 @@ export default function Storage()
 
         function handleStream(e){
             console.log(e.data)
-            setpredcsv(e.data)
+            
+
+            e.data.split('$').map((record)=>(valueList.push([record.split(',')[0], record.split(',')[1]])));
+            valueList.unshift([{ type: 'string', label: 'Time' },{label:'Forecast',type:'number'}])
+            setList(valueList);
+            // List.push(valueList)
         }
 
         sse.onmessage = e => {handleStream(e)}
 
         sse.onerror = e => {
-
             sse.close()
         }
 
         return () => {
             sse.close()
         }
-    }, );
+    });
 
 
     
-    useEffect(()=>{
-        setoutputArray(predcsv.split('$'));
-    }, [predcsv]);
+    // useEffect(()=>{
+    //     setoutputArray(predcsv.split('$'));
+    // }, [predcsv]);
 
-    useEffect(()=>{
-        console.log(outputArray.length)
-        let valueList = []
+    // useEffect(()=>{
+    //     console.log(outputArray.length)
+    //     let valueList = []
 
-        outputArray.map((record)=>(valueList.push([record.split(',')[0], record.split(',')[1]])));
-        // outputArray1.map((record)=>(valueList1.push([record.split('  ')[0], record.split('  ')[1].split(',')[0]])));
-        valueList.unshift([{ type: 'string', label: 'Time' },{label:'Forecast',type:'number'}])
-        setList(valueList);
+    //     outputArray.map((record)=>(valueList.push([record.split(',')[0], record.split(',')[1]])));
+    //     // outputArray1.map((record)=>(valueList1.push([record.split('  ')[0], record.split('  ')[1].split(',')[0]])));
+    //     valueList.unshift([{ type: 'string', label: 'Time' },{label:'Forecast',type:'number'}])
+    //     setList(valueList);
 
-    },[outputArray])
+    // },[outputArray])
 
 
     return (
@@ -99,6 +103,7 @@ export default function Storage()
                 </FormControl>
                 </Box>
             </div> */}
+
 
             <Chart
                 width={'100%'}
