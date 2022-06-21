@@ -27,7 +27,7 @@ export default function HomePage() {
     const [file, setFile] = useState();
     const [outputArray, setoutputArray] = useState([]);
     const [getMessage, setGetMessage] = useState({})
-    const [getMessage1, setGetMessage1] = useState({})
+    const [getMessage1, setGetMessage1] = useState({});
     const [List,setList]=useState([]);
     
     const [model, setModel] = useState('');
@@ -258,17 +258,72 @@ export default function HomePage() {
                 setProcessed(true);
             })
         }else if(model === 'rnn'){
-            axios.post('http://127.0.0.1:5000/rnn', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
+            // axios.post('http://127.0.0.1:5000/rnn', formData, {
+            // headers: {
+            //   'Content-Type': 'multipart/form-data'
+            // }
+            // } )
+            // .then(function (response) {
+            //     console.log(response.data);
+            //     setpredcsv(response.data);
+            //     setProcessing(false);
+            //     setProcessed(true);
+            // })
+            if(action === 'train'){
+                axios.post('http://127.0.0.1:5000/rnn/train', formData, 
+                    {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                    body:{
+                        'userID':userID
+                    } 
+                })
+                .then(function (response) { 
+                    console.log(response.data);
+                    setpredcsv(response.data);
+                    setProcessing(false);
+                    setProcessed(true);
+                    setOpen({open:true});
+                })
+            }else if(action === 'predict'){
+                axios.post('http://127.0.0.1:5000/rnn/predict', {
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body:{
+                    "days": nextDays,
+                    "hours":nextHours,
+                    "userID": userID
+                }
+                } )
+                .then(function (response) { 
+                    console.log(response.data);
+                    setpredcsv(response.data);
+                    setProcessing(false);
+                    setProcessed(true);
+                })
+            }else{
+                axios.post('http://127.0.0.1:5000/rnn/update', formData, {
+                headers: {
+                'Content-Type': 'multipart/form-data'
+                },
+                body:{
+                    'userID':userID
+                } 
+                } )
+                .then(function (response) { 
+                    console.log(response.data);
+                    setpredcsv(response.data);
+                    setProcessing(false);
+                    setProcessed(true);
+                    setOpen({open:true});
+                })
             }
-            } )
-            .then(function (response) {
-                console.log(response.data);
-                setpredcsv(response.data);
-                setProcessing(false);
-                setProcessed(true);
-            })
+
+
+
+
         }else if(model === 'mlmodels'){
             axios.post('http://127.0.0.1:5000/mlmodels', formData, {
             headers: {
@@ -455,7 +510,7 @@ export default function HomePage() {
                     
                 <br/>
                 
-                {model==='autoarima' || model==='linearregression'?
+                {model==='autoarima' || model==='linearregression' || model === 'rnn'?
                     <FormControl>
                     <FormLabel id="demo-row-radio-buttons-group-label">Action</FormLabel>
                     <RadioGroup
@@ -476,7 +531,7 @@ export default function HomePage() {
                     :<span></span>
                 }
 
-                {action === 'predict' && (model === 'autoarima' || model==='linearregression')?
+                {action === 'predict' && (model === 'autoarima' || model==='linearregression'|| model === 'rnn')?
                     <div>
                         <br/>
                         <div style={{alignItems:'center',justifyContent:'center', width:150, margin:'0px auto'}}>
@@ -624,13 +679,13 @@ export default function HomePage() {
 
         <br/>
         
-        {action === 'predict' && (model === 'autoarima' || model === 'linearregression') && processed?<div><h1>Predictions</h1></div>:<span></span>}
+        {action === 'predict' && (model === 'autoarima' || model === 'linearregression' || model === 'rnn') && processed?<div><h1>Predictions</h1></div>:<span></span>}
         
         
         
 
         <div style={{ alignContent: "center", width: '95%', margin:'auto' }}>
-            {action === 'predict' && (model === 'autoarima' || model === 'linearregression' ) && processed?
+            {action === 'predict' && (model === 'autoarima' || model === 'linearregression' || model === 'rnn' ) && processed?
                 <Chart
                 width={'100%'}
                 height={'800px'}

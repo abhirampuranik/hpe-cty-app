@@ -8,9 +8,9 @@ class DateGen:
         pass
 
     def date_df(self,hr,uID,initTime):
-        print(initTime)
+        # print(initTime)
         initTime = initTime.split(".")[0]
-        print("here "+initTime)
+        # print("here "+initTime)
         dt_tuple=tuple([int(x) for x in initTime[:10].split('-')])+tuple([int(x) for x in initTime[11:].split(':')])
         initTime = datetime(*dt_tuple)
         time_t = []

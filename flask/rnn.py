@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-%matplotlib inline
+# %matplotlib inline
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.preprocessing.sequence import TimeseriesGenerator

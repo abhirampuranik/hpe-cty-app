@@ -14,7 +14,7 @@ from dateGen import DateGen
 from dateGenML import DateGenML
 from rnn import Rnn
 # from ML import MLModelsClass
-from flask import Flask, flash, request, redirect, url_for, session
+from flask import Flask, flash, request, redirect, url_for, session, Response
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
 
@@ -55,26 +55,31 @@ def dataLinearReg():
     userID = int(request.form['userID'])
     df = pd.read_csv(file)
     df = df[df['UserID'] == userID]
-    df = df[:-120]
+    df = df[:-769]
     return df.to_csv(index=False)
 
 
 @app.route('/stream',methods=['GET'])
 def stream():
-    dg = DateGen()
-    # file = request.files['file'] 
-    df = pd.read_csv("storage_train.csv")
-    df_prep = AutoArima.preprocess(df,1)
-    AutoArima.train(df_prep[:50])
-    for i in range(50,len(df_prep)):
-        AutoArima.update(df_prep[i:i+1])
-        df = dg.date_df(10,1,df_prep.index[i])
-        preds = AutoArima.predict(df)
-        final_df = df_prep[45:i].append(preds)
-        print(len(final_df))
-        print(final_df)
-        time.sleep(10)
-    return "Model Streaming"
+    def getdata():
+        dg = DateGen()
+        # file = request.files['file'] 
+        df = pd.read_csv("storage_train.csv")
+        df_prep = AutoArima.preprocess(df,1)
+        # AutoArima.train(df_prep[:50])
+        for i in range(50,len(df_prep)):
+            # AutoArima.update(df_prep[i:i+1])
+            df = dg.date_df(10,1,df_prep.index[i])
+            preds = AutoArima.predict(df)
+            final_df = df_prep[45:i].append(preds)
+            #gotcha
+            s = final_df.to_csv().strip()
+            yield f'data: {s} \n\n' 
+            time.sleep(1)
+    response = Response(getdata(), mimetype='text/event-stream')
+
+    # response.headers['Content-Disposition'] = 'attachment; filename=data.csv'
+    return response
 
 # @app.route('/stream',methods=['GET'])
 # def stream():
