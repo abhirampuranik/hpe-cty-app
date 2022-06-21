@@ -12,7 +12,7 @@ from multinomialNaiveBayes import MultinomialNaiveBayesClass
 # from ProphetAPI import ProphetClass
 from dateGen import DateGen
 from dateGenML import DateGenML
-from rnn import Rnn
+# from rnn import Rnn
 # from ML import MLModelsClass
 from flask import Flask, flash, request, redirect, url_for, session, Response
 from werkzeug.utils import secure_filename
@@ -61,26 +61,28 @@ def dataLinearReg():
 
 @app.route('/stream',methods=['GET'])
 def stream():
+    df = pd.read_csv("storage_train.csv")
+    df_prep = AutoArima.preprocess(df,1)
+    dg = DateGen()
+    # AutoArima.train(df_prep[:50])
     def getdata():
-        dg = DateGen()
         # file = request.files['file'] 
-        df = pd.read_csv("storage_train.csv")
-        df_prep = AutoArima.preprocess(df,1)
-        # AutoArima.train(df_prep[:50])
+        
         for i in range(50,len(df_prep)):
             # AutoArima.update(df_prep[i:i+1])
-            df = dg.date_df(10,1,df_prep.index[i])
+            df = dg.date_df(5,1,df_prep.index[i])
             preds = AutoArima.predict(df)
-            final_df = df_prep[45:i].append(preds)
+            final_df = df_prep[49:i].append(preds)
+            s = final_df.to_csv().replace('\n', '$')
+            print(len(s))
             #gotcha
-            s = final_df.to_csv().replace('\r\n', '$')
-            a = "fjkldsja\nhere also"
-            a = a.replace('\n', '$')
             yield f'data: {s} \n\n' 
-            time.sleep(1)
+            time.sleep(5)
+            
     response = Response(getdata(), mimetype='text/event-stream')
 
-    # response.headers['Content-Disposition'] = 'attachment; filename=data.csv' coming in 5 mins, fine... ill try this last time, ill go.. i didnt go after you went ok i will try untill then
+    response.headers['Content-Disposition'] = 'inline'
+    # response.headers['Content-Disposition'] = 'attachment; filename=data.csv'
     return response
 
 # @app.route('/stream',methods=['GET'])
