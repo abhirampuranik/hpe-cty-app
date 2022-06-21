@@ -246,9 +246,10 @@ export default function HomePage() {
 
 
         }else if(model === 'prophet'){
-            axios.post('http://127.0.0.1:5000/prophet', formData, {
+            if(action ==='train'){
+                axios.post('http://127.0.0.1:5000/prophet/train', formData, {
             headers: {
-              'Content-Type': 'multipart/form-data'
+                'Content-Type': 'application/json'
             }
             } )
             .then(function (response) {
@@ -256,7 +257,27 @@ export default function HomePage() {
                 setpredcsv(response.data);
                 setProcessing(false);
                 setProcessed(true);
+                setOpen({open:true});
             })
+            }
+            else{
+            axios.post('http://127.0.0.1:5000/prophet/predict', {
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body:{
+                "days": nextDays,
+                "hours":nextHours,
+                "userID": userID
+            }
+            } )
+            .then(function (response) {
+                console.log(response.data);
+                setpredcsv(response.data);
+                setProcessing(false);
+                setProcessed(true);
+                setOpen({open:true});
+            })}
         }else if(model === 'rnn'){
             // axios.post('http://127.0.0.1:5000/rnn', formData, {
             // headers: {
@@ -430,7 +451,12 @@ export default function HomePage() {
             console.log("value list 1",valueList1)
 
         }else if(model === 'prophet'){
-
+            outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[1]])));
+            // outputArray1.map((record)=>(valueList1.push([record.split('  ')[0], record.split('  ')[1].split(',')[0]])));
+            valueList1.unshift([{ type: 'string', label: 'Time' },{label:'Forecast',type:'number'}])
+            setList1(valueList1);
+            console.log("output array1 from flask", outputArray1)
+            console.log("value list 1",valueList1)
 
         }else if(model === 'mlmodels'){
             outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[2],record.split(',')[5], record.split(',')[6],record.split(',')[7],record.split(',')[8]])));
@@ -510,7 +536,7 @@ export default function HomePage() {
                     
                 <br/>
                 
-                {model==='autoarima' || model==='linearregression' || model === 'rnn'?
+                {model==='autoarima'?
                     <FormControl>
                     <FormLabel id="demo-row-radio-buttons-group-label">Action</FormLabel>
                     <RadioGroup
@@ -528,10 +554,23 @@ export default function HomePage() {
                     
                     
                     
-                    :<span></span>
+                    :model==='prophet' || model==='linearregression' || model === 'rnn'?
+                    <FormControl>
+                    <FormLabel id="demo-row-radio-buttons-group-label">Action</FormLabel>
+                    <RadioGroup
+                        row
+                        aria-labelledby="demo-row-radio-buttons-group-label"
+                        name="row-radio-buttons-group"
+                        value={action}
+                        onChange={handleChangeAction}
+                    >
+                        <FormControlLabel value="train" control={<Radio />} label="Train" />
+                        <FormControlLabel value="predict" control={<Radio />} label="Predict" />
+                    </RadioGroup>
+                    </FormControl>:<span></span>
                 }
 
-                {action === 'predict' && (model === 'autoarima' || model==='linearregression'|| model === 'rnn')?
+                {action === 'predict' && (model === 'autoarima' || model==='linearregression'|| model === 'rnn' || model === 'prophet')?
                     <div>
                         <br/>
                         <div style={{alignItems:'center',justifyContent:'center', width:150, margin:'0px auto'}}>
@@ -679,13 +718,13 @@ export default function HomePage() {
 
         <br/>
         
-        {action === 'predict' && (model === 'autoarima' || model === 'linearregression' || model === 'rnn') && processed?<div><h1>Predictions</h1></div>:<span></span>}
+        {action === 'predict' && (model === 'autoarima' || model === 'linearregression' || model === 'rnn' || model === 'prophet') && processed?<div><h1>Predictions</h1></div>:<span></span>}
         
         
         
 
         <div style={{ alignContent: "center", width: '95%', margin:'auto' }}>
-            {action === 'predict' && (model === 'autoarima' || model === 'linearregression' || model === 'rnn' ) && processed?
+            {action === 'predict' && (model === 'autoarima' || model === 'linearregression' || model === 'rnn' || model === 'prophet') && processed?
                 <Chart
                 width={'100%'}
                 height={'800px'}
