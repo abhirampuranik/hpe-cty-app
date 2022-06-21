@@ -138,21 +138,41 @@ export default function HomePage() {
         formData.append("file", file1);
         formData.append("userID", userID)
 
-        axios.post('http://127.0.0.1:5000/data', formData,
-        {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        },
-        body:{
-            'userID':userID
-        } 
+        if(model === 'rnn' || model === 'linearregression'){
+            axios.post('http://127.0.0.1:5000/data', formData,
+            {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+            body:{
+                'userID':userID
+            } 
 
-        })
-        .then(function (response) { 
-            console.log(response.data);
-            setoutputArray(response.data.split('\n'))
+            })
+            .then(function (response) { 
+                console.log(response.data);
+                setoutputArray(response.data.split('\n'))
 
-        })
+            })
+        }else{
+            axios.post('http://127.0.0.1:5000/datalinearreg', formData,
+            {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+            body:{
+                'userID':userID
+            } 
+
+            })
+            .then(function (response) { 
+                console.log(response.data);
+                setoutputArray(response.data.split('\n'))
+
+            })
+
+        }
+        
 
 
 
@@ -506,7 +526,6 @@ export default function HomePage() {
                         <MenuItem value={'prophet'}>Prophet</MenuItem>
                         <MenuItem value={'rnn'}>RNN</MenuItem>
                         <MenuItem value={'linearregression'}>Linear Regression</MenuItem>
-                        <MenuItem value={'mlmodels'}>ML Models</MenuItem>
                         </Select>
                     </FormControl>
                     
@@ -524,7 +543,6 @@ export default function HomePage() {
                         <MenuItem value={'2'}>2</MenuItem>
                         <MenuItem value={'3'}>3</MenuItem>
                         <MenuItem value={'4'}>4</MenuItem>
-                        <MenuItem value={'5'}>5</MenuItem>
 
                         </Select>
                     </FormControl>
