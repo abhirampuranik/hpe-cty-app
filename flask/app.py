@@ -9,9 +9,10 @@ from linearRegression import linearRegressionClass
 from randomForest import randomForestClass
 from xgb import XGBClass 
 from multinomialNaiveBayes import MultinomialNaiveBayesClass
-# from ProphetAPI import ProphetClass
+from ProphetAPI import ProphetClass
 from dateGen import DateGen
 from dateGenML import DateGenML
+from DateGenP import DateGenP
 # from rnn import Rnn
 # from ML import MLModelsClass
 from flask import Flask, flash, request, redirect, url_for, session, Response
@@ -280,22 +281,29 @@ def prophet_train():
       df = pd.read_csv(file)
       df = ProphetClass.preprocess(df, userID)
       ProphetClass.train(df)
-      return 'Prophet trained'
+      return 'Prophet trained Successfully'
 
 @app.route('/prophet/predict',methods=['POST'])
 def prophet_predict():
-      days = request.json['body']['days']
-      hours = request.json['body']['hours']
-      userID = request.json['body']['userID']
-      #df = ProphetClass.preprocess(df, userID)
-      #test = ProphetClass.train(df)
-      dg = DateGenP()
-      test = dg.date_df(int(days)*24 + int(hours), int(userID))
-      test = test.rename(columns = {'Time': 'ds'})
-      preds = ProphetClass.predict(test)
-      #print(preds)
-      response = preds
-      return response.to_csv()
+        # print("test"+request.body)
+        try:
+            days = request.json['body']['days']
+            hours = request.json['body']['hours']
+            userID = request.json['body']['userID']
+        #df = ProphetClass.preprocess(df, userID)
+        #test = ProphetClass.train(df)
+        except Exception as e:
+            print(e)
+            days,hours,userID = 1,10,1
+        dg = DateGenP()
+        test = dg.date_df(int(days)*24 + int(hours), int(userID))
+        test = test.rename(columns = {'Time': 'ds'})
+        preds = ProphetClass.predict(test)
+        #print(preds)
+        response = preds
+        # response.index = response['Time']
+        print(response.to_csv(index=False))
+        return response.to_csv(index=False)
 
 # RNN
 
