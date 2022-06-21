@@ -326,7 +326,8 @@ def rnn_predict():
     df = Rnn.preprocess(df,int(userID))
     preds = Rnn.predict(df,hrs)
     #Rnn.update(df,hrs)
-    response=preds       
+    response=preds
+    print("response",response)
     return response.to_csv(index=False)   
 
 # ML Models
