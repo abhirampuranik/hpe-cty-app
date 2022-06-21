@@ -73,12 +73,14 @@ def stream():
             preds = AutoArima.predict(df)
             final_df = df_prep[45:i].append(preds)
             #gotcha
-            s = final_df.to_csv().strip()
+            s = final_df.to_csv().replace('\r\n', '$')
+            a = "fjkldsja\nhere also"
+            a = a.replace('\n', '$')
             yield f'data: {s} \n\n' 
             time.sleep(1)
     response = Response(getdata(), mimetype='text/event-stream')
 
-    # response.headers['Content-Disposition'] = 'attachment; filename=data.csv'
+    # response.headers['Content-Disposition'] = 'attachment; filename=data.csv' coming in 5 mins, fine... ill try this last time, ill go.. i didnt go after you went ok i will try untill then
     return response
 
 # @app.route('/stream',methods=['GET'])

@@ -63,11 +63,11 @@ export default function Storage()
 
     
     useEffect(()=>{
-        setoutputArray(predcsv.split('\n'));
+        setoutputArray(predcsv.split('$'));
     }, [predcsv]);
 
     useEffect(()=>{
-
+        console.log(outputArray.length)
         let valueList = []
 
         outputArray.map((record)=>(valueList.push([record.split(',')[0], record.split(',')[1]])));
@@ -82,7 +82,7 @@ export default function Storage()
         <div style={{ textAlign: "center", alignContent:"center", alignItems:"center" }}>
             <h1>Storage</h1>
 
-            <div style={{alignItems:'center',justifyContent:'center', width:500, margin:'0px auto'}}>
+            {/* <div style={{alignItems:'center',justifyContent:'center', width:500, margin:'0px auto'}}>
                 <Box justify = "center">
                 <FormControl fullWidth>
                     <InputLabel id="demo-simple-select-label">Storage</InputLabel>
@@ -98,7 +98,7 @@ export default function Storage()
                     </Select>
                 </FormControl>
                 </Box>
-            </div>
+            </div> */}
 
             <Chart
                 width={'100%'}

@@ -424,7 +424,7 @@ export default function HomePage() {
         }else if(model === 'rnn'){
             outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[1], record.split(',')[2], record.split(',')[3]])));
             // outputArray1.map((record)=>(valueList1.push([record.split('  ')[0], record.split('  ')[1].split(',')[0]])));
-            valueList1.unshift([{ type: 'string', label: 'Time' },{label:'Usage',type:'number'},{label:'Forecast_rnn',type:'number'},{label:'Forecast_lstm',type:'number'}])
+            valueList1.unshift([{ type: 'string', label: 'Time' },{label:'Forecast_rnn',type:'number'}])
             setList1(valueList1);
             console.log("output array1 from flask", outputArray1)
             console.log("value list 1",valueList1)
