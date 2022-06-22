@@ -63,21 +63,5 @@ class linearRegressionClass:
 			test['Time']=test.index
 			test.reset_index(drop=True, inplace=True)
 			print(test[['Time','Linear_Regression_Predictions']])
-			return test[['Time','Linear_Regression_Predictions']]
-			
-	def update(df,hrs):
-		lin_model=LinearRegression()
-		x1,x2,x3,y=df['Usage_LastHour'],df['Usage_2Hoursback'],df['Usage_3Hoursback'],df['Usage']
-		x1,x2,x3,y=np.array(x1),np.array(x2),np.array(x3),np.array(y)
-		x1,x2,x3,y=x1.reshape(-1,1),x2.reshape(-1,1),x3.reshape(-1,1),y.reshape(-1,1)
-		final_x=np.concatenate((x1,x2,x3),axis=1)	
-		train = df.iloc[:-120]
-		test = df.iloc[-120:-120+hrs]		
-		X_train,X_test,y_train,y_test=final_x[:-120],final_x[-120:-120+hrs],y[:-120],y[-120:-120+hrs]
-		lin_model.fit(X_test,y_test) 
-		# with open('LinearRegression.pkl', 'rb') as pkl:
-		# 	prediction = pickle.load(pkl).fit(X_test,y_test)
-			#prediction = pickle.load(pkl).predict(X_test)
-
-		with open('LinearRegression.pkl', 'wb') as pkl:
-			pickle.dump(lin_model, pkl)
+			return test[['Time','Linear_Regression_Predictions']]			
+	
