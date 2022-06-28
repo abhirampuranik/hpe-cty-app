@@ -16,6 +16,7 @@ import FormLabel from "@mui/material/FormLabel";
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import Slide from '@mui/material/Slide';
+import ChartGraph from './ChartGraph';
 
 function TransitionRight(props) {
   return <Slide {...props} direction="right" />;
@@ -48,6 +49,8 @@ export default function HomePage() {
     const [predcsv, setpredcsv] = useState("");
     const [outputArray1, setoutputArray1] = useState([]);
     const [List1,setList1]=useState([]);
+    const [SnackbarString,setSnackbarString]=useState('');
+
 
     
 
@@ -138,40 +141,35 @@ export default function HomePage() {
         formData.append("file", file1);
         formData.append("userID", userID)
 
-        // if(model === 'rnn' || model === 'linearregression'){
-        //     axios.post('http://127.0.0.1:5000/data', formData,
-        //     {
-        //     headers: {
-        //         'Content-Type': 'multipart/form-data'
-        //     },
-        //     body:{
-        //         'userID':userID
-        //     } 
-
-        //     })
-        //     .then(function (response) { 
-        //         console.log(response.data);
-        //         setoutputArray(response.data.split('\n'))
-
-        //     })
-        // }else{
-            axios.post('http://127.0.0.1:5000/data', formData,
-            {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            },
-            body:{
-                'userID':userID
-            } 
-
+        if(model === 'rnn' || model === 'linearregression'){
+            axios.post('http://127.0.0.1:5000/datalinearreg', formData,
+                {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+                body:{
+                    'userID':userID
+                } 
             })
             .then(function (response) { 
                 console.log(response.data);
                 setoutputArray(response.data.split('\n'))
-
             })
-
-        // }
+        }else{
+            axios.post('http://127.0.0.1:5000/data', formData,
+                {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+                body:{
+                    'userID':userID
+                } 
+            })
+            .then(function (response) { 
+                console.log(response.data);
+                setoutputArray(response.data.split('\n'))
+            })
+        }
         
 
 
@@ -255,7 +253,8 @@ export default function HomePage() {
                 } )
                 .then(function (response) { 
                     console.log(response.data);
-                    setpredcsv(response.data);
+                    // setpredcsv(response.data);
+                    setSnackbarString(response.data)
                     setProcessing(false);
                     setProcessed(true);
                     setOpen({open:true});
@@ -299,17 +298,7 @@ export default function HomePage() {
                 setOpen({open:true});
             })}
         }else if(model === 'rnn'){
-            // axios.post('http://127.0.0.1:5000/rnn', formData, {
-            // headers: {
-            //   'Content-Type': 'multipart/form-data'
-            // }
-            // } )
-            // .then(function (response) {
-            //     console.log(response.data);
-            //     setpredcsv(response.data);
-            //     setProcessing(false);
-            //     setProcessed(true);
-            // })
+            
             if(action === 'train'){
                 axios.post('http://127.0.0.1:5000/rnn/train', formData, 
                     {
@@ -344,39 +333,10 @@ export default function HomePage() {
                     setProcessing(false);
                     setProcessed(true);
                 })
-            }else{
-                axios.post('http://127.0.0.1:5000/rnn/update', formData, {
-                headers: {
-                'Content-Type': 'multipart/form-data'
-                },
-                body:{
-                    'userID':userID
-                } 
-                } )
-                .then(function (response) { 
-                    console.log(response.data);
-                    setpredcsv(response.data);
-                    setProcessing(false);
-                    setProcessed(true);
-                    setOpen({open:true});
-                })
             }
 
 
 
-
-        }else if(model === 'mlmodels'){
-            axios.post('http://127.0.0.1:5000/mlmodels', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-            } )
-            .then(function (response) {
-                console.log(response.data);
-                setpredcsv(response.data);
-                setProcessing(false);
-                setProcessed(true);
-            })
 
         }else if(model === 'linearregression'){
 
@@ -413,22 +373,6 @@ export default function HomePage() {
                     setProcessing(false);
                     setProcessed(true);
                 })
-            }else{
-                axios.post('http://127.0.0.1:5000/linearRegression/update', formData, {
-                headers: {
-                'Content-Type': 'multipart/form-data'
-                },
-                body:{
-                    'userID':userID
-                } 
-                } )
-                .then(function (response) { 
-                    console.log(response.data);
-                    setpredcsv(response.data);
-                    setProcessing(false);
-                    setProcessed(true);
-                    setOpen({open:true});
-                })
             }
             
         }
@@ -453,47 +397,14 @@ export default function HomePage() {
     useEffect(() => {
         let valueList1 = []
 
-        
-        if(model === 'autoarima'){
-            outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[1]])));
-            // outputArray1.map((record)=>(valueList1.push([record.split('  ')[0], record.split('  ')[1].split(',')[0]])));
-            valueList1.unshift([{ type: 'string', label: 'Time' },{label:'Forecast',type:'number'}])
-            setList1(valueList1);
-            console.log("output array1 from flask", outputArray1)
-            console.log("value list 1",valueList1)
+        outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[1]])));
+        // // outputArray1.map((record)=>(valueList1.push([record.split('  ')[0], record.split('  ')[1].split(',')[0]])));
+        valueList1.unshift([{ type: 'string', label: 'Time' },{label:'Forecast',type:'number'}]);
+        setList1(valueList1);
+        // console.log("output array1 from flask", outputArray1)
+        // console.log("value list 1",valueList1)
 
-        }else if(model === 'rnn'){
-            outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[1]])));
-            // outputArray1.map((record)=>(valueList1.push([record.split('  ')[0], record.split('  ')[1].split(',')[0]])));
-            valueList1.unshift([{ type: 'string', label: 'Time' },{label:'Forecast_rnn',type:'number'}])
-            setList1(valueList1);
-            console.log("output array1 from flask", outputArray1)
-            console.log("value list 1",valueList1)
-
-        }else if(model === 'prophet'){
-            outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[1]])));
-            // outputArray1.map((record)=>(valueList1.push([record.split('  ')[0], record.split('  ')[1].split(',')[0]])));
-            valueList1.unshift([{ type: 'string', label: 'Time' },{label:'Forecast',type:'number'}])
-            setList1(valueList1);
-            console.log("output array1 from flask", outputArray1)
-            console.log("value list 1",valueList1)
-
-        }else if(model === 'mlmodels'){
-            outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[2],record.split(',')[5], record.split(',')[6],record.split(',')[7],record.split(',')[8]])));
-            // outputArray1.map((record)=>(valueList1.push([record.split('  ')[0], record.split('  ')[1].split(',')[0]])));
-            valueList1.unshift([{ type: 'string', label: 'Time' },{label:'Usage',type:'number'},{label:'Forecast_Random_forest',type:'number'},{label:'Forecast_LR',type:'number'},{label:'Forecast_Extreme_gradient_descent',type:'number'},{label:'Forecast_MNB',type:'number'}])
-            setList1(valueList1);
-            console.log("output array1 from flask", outputArray1)
-            console.log("value list 1",valueList1)
-        }else if(model === 'linearregression'){
-            outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[1]])));
-            // outputArray1.map((record)=>(valueList1.push([record.split('  ')[0], record.split('  ')[1].split(',')[0]])));
-            valueList1.unshift([{ type: 'string', label: 'Time' },{label:'Forecast',type:'number'}])
-            setList1(valueList1);
-            console.log("output array1 from flask", outputArray1)
-            console.log("value list 1",valueList1)
-        }
-        
+    
         
     }, [outputArray1]);
 
@@ -503,6 +414,7 @@ export default function HomePage() {
     return (
         <div style={{ textAlign: "center", alignContent:"center", alignItems:"center" }}>
             
+        
         <div style={{ textAlign: "center" , alignContent:'center'}}>
             <h1>Upload your data</h1>
             <div>{getMessage1.status === 200 ? 
@@ -688,9 +600,7 @@ export default function HomePage() {
       >
         <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
           {
-            List1.length!==0?List1[1][0]:""
-            // List1[1][0]
-
+            SnackbarString.length!==0? SnackbarString : ""
           }
         </Alert>
       </Snackbar>
@@ -702,77 +612,18 @@ export default function HomePage() {
         <br/>
         {processing? <div><h1>Processing</h1><HourglassTopIcon/></div>:<span></span>}
         <br/>
-        <div style={{ alignContent: "center", width: '95%', margin:'auto'}}>
-            {outputArray.length!==0?
-                <div>
-                <h3>Plot</h3>
-                <Chart
-                width={'100%'}
-                height={'800px'}
-                chartType="LineChart"
-                loader={<div>Storage consumption Chart</div>}
-                data={
-                List
-                }
-                
-                options={{
-                    chartArea: {                        
-                        innerWidth:'80%',
-                        width: '70%'
-                      },
-                hAxis: {
-                    title: 'Time',
-                },
-                backgroundColor: {
-                    fill: '#c39ea0',//'#fbf6a7',
-                    fillOpacity: 0.8},
-                color:"white",
-                vAxis: {
-                    title: 'Storage consumption (in MB)',
-                }
-                }}
-                /></div>:<span></span>}
-        </div>
+        
+        {outputArray.length!==0?
+            <ChartGraph List={List} color={"#c39ea0"} title={'Storage consumption (in MB)'}/>:<span></span>}
 
         <br/>
         
         {action === 'predict' && (model === 'autoarima' || model === 'linearregression' || model === 'rnn' || model === 'prophet') && processed?<div><h1>Predictions</h1></div>:<span></span>}
         
         
-        
+        {action === 'predict' && (model === 'autoarima' || model === 'linearregression' || model === 'rnn' || model === 'prophet') && processed?
+            <ChartGraph List={List1} color={"#fbf6a7"} title={"Storage Forecast consumption (in MB)"}/>:<span></span>}
 
-        <div style={{ alignContent: "center", width: '95%', margin:'auto' }}>
-            {action === 'predict' && (model === 'autoarima' || model === 'linearregression' || model === 'rnn' || model === 'prophet') && processed?
-                <Chart
-                width={'100%'}
-                height={'800px'}
-                chartType="LineChart"
-                loader={<div>Storage consumption Chart</div>}
-                data={
-                  List1
-                }
-                // data={
-                //     [["Age", "Weight","pred"], [1,2,2],[3,4,5],[4,3,6],[5,6,8],[7,8,10]]
-                // }
-                
-                options={{
-                    chartArea: {                        
-                        innerWidth:'90%',
-                        width: '70%'
-                      },
-                hAxis: {
-                    title: 'Time',
-                },
-                backgroundColor: {
-                    fill: '#fbf6a7',//'#fbf6a7',#c39ea0
-                    fillOpacity: 0.8},
-                color:"white",
-                vAxis: {
-                    title: 'Storage Forecast consumption (in MB)',
-                }
-                }}
-                />:<span></span>}
-        </div>
           
         </div>
       );
