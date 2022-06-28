@@ -87,12 +87,6 @@ export default function HomePage() {
 
 
     useEffect(()=>{
-        axios.get('http://127.0.0.1:5000/time').then(response => {
-          console.log("SUCCESS", response)
-          setGetMessage(response)
-        }).catch(error => {
-          console.log(error)
-        })
 
         axios.get('http://127.0.0.1:5000/hello').then(response => {
           console.log("SUCCESS", response)
@@ -335,9 +329,6 @@ export default function HomePage() {
                 })
             }
 
-
-
-
         }else if(model === 'linearregression'){
 
             if(action === 'train'){
@@ -374,7 +365,6 @@ export default function HomePage() {
                     setProcessed(true);
                 })
             }
-            
         }
 
         
