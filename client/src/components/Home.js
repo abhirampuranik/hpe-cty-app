@@ -50,31 +50,26 @@ export default function HomePage() {
     const [outputArray1, setoutputArray1] = useState([]);
     const [List1,setList1]=useState([]);
     const [SnackbarString,setSnackbarString]=useState('');
-
-
-    
-
-
     const fileReader = new FileReader();
 
     const [state, setOpen] = React.useState({
         open:false
-});
+    });
 
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
 
-    setOpen({open:false});
-  };
+        setOpen({open:false});
+    };
 
     const handleChangeOnModel = (event) => {
         setModel(event.target.value);
-      };
+    };
 
       
-      const {open} = state;
+    const {open} = state;
 
 
     const handleOnChange = (e) => {
@@ -108,22 +103,6 @@ export default function HomePage() {
 
     },[listDays])
 
-
-    // const fun1 = () => {
-    //     if (file) {
-    //         fileReader.onload = function (event) {
-    //             const csvOutput = event.target.result;
-    //             // setoutput(csvOutput.split('\n'));
-    //             setoutputArray(csvOutput.split('\n'));
-
-    //         };
-
-    //         // setoutputArray(output);
-    //         fileReader.readAsText(file)
-            
-    //     }
-        
-    // }
 
     const handleOnSubmit = (e) => {
         e.preventDefault();
@@ -163,12 +142,7 @@ export default function HomePage() {
                 console.log(response.data);
                 setoutputArray(response.data.split('\n'))
             })
-        }
-        
-
-
-
-        
+        }   
     };
 
     const handleChangeAction = (event) => {
@@ -187,6 +161,35 @@ export default function HomePage() {
         setList(valueList);
         console.log("List values",valueList)
      }, [outputArray]);
+
+
+
+    // Prediction graph data
+
+     useEffect(() => {
+        setoutputArray1(predcsv.split('\n'));
+    }, [predcsv]);
+
+    useEffect(() => {
+        console.log(List1)
+    }, [List1]);
+
+
+
+    useEffect(() => {
+        let valueList1 = []
+
+        outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[1]])));
+        // // outputArray1.map((record)=>(valueList1.push([record.split('  ')[0], record.split('  ')[1].split(',')[0]])));
+        valueList1.unshift([{ type: 'string', label: 'Time' },{label:'Forecast',type:'number'}]);
+        setList1(valueList1);
+        // console.log("output array1 from flask", outputArray1)
+        // console.log("value list 1",valueList1)
+
+    
+        
+    }, [outputArray1]);
+
 
 
     const sendCSV = (e) => {
@@ -371,33 +374,7 @@ export default function HomePage() {
           
     }
 
-    useEffect(() => {
-        // const fileReader1 = new FileReader();
-        setoutputArray1(predcsv.split('\n'));
-
-        // fileReader1.readAsText(predcsv);
-    }, [predcsv]);
-
-    useEffect(() => {
-        console.log(List1)
-    }, [List1]);
-
-
-
-    useEffect(() => {
-        let valueList1 = []
-
-        outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[1]])));
-        // // outputArray1.map((record)=>(valueList1.push([record.split('  ')[0], record.split('  ')[1].split(',')[0]])));
-        valueList1.unshift([{ type: 'string', label: 'Time' },{label:'Forecast',type:'number'}]);
-        setList1(valueList1);
-        // console.log("output array1 from flask", outputArray1)
-        // console.log("value list 1",valueList1)
-
     
-        
-    }, [outputArray1]);
-
 
     
 

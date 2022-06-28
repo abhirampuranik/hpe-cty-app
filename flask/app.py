@@ -314,15 +314,6 @@ def rnn_train():
     Rnn.train(df)
     return "Model Trained Successfully" 
 
-@app.route('/rnn/update',methods=['POST'])
-def rnn_update():
-    # file = request.files['file']
-    # userID = int(request.form['userID'])
-    # df = pd.read_csv(file)
-    # df = linearRegressionClass.preprocess(df,userID)
-    # linearRegressionClass.update(df)
-    return "Updated Model Successfully"
-
 @app.route('/rnn/predict',methods=['POST'])
 def rnn_predict():
     days = request.json['body']['days']
