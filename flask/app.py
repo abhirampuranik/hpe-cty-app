@@ -146,18 +146,9 @@ def linearRegression_train():
     file = request.files['file']
     userID = int(request.form['userID'])
     df = pd.read_csv(file)    
-    df = linearRegressionClass.preprocess(df,userID)
+    df = linearRegressionClass.preprocess(df,userID,"train")
     linearRegressionClass.train(df)
     return "Model Trained Successfully"   
-
-@app.route('/linearRegression/update',methods=['POST'])
-def linearRegression_update():
-    # file = request.files['file']
-    # userID = int(request.form['userID'])
-    # df = pd.read_csv(file)
-    # df = linearRegressionClass.preprocess(df,userID)
-    # linearRegressionClass.update(df)
-    return "Updated Model Successfully"  
 
 @app.route('/linearRegression/predict',methods=['POST'])
 def linearRegression_predict():
@@ -165,11 +156,10 @@ def linearRegression_predict():
     hours = request.json['body']['hours']
     userID = request.json['body']['userID']
     #file = request.files['file']
-    df = pd.read_csv('increase_1.csv')
+    df = pd.read_csv('LR_Predict.csv')
     hrs=int(days)*24 + int(hours)
-    df = linearRegressionClass.preprocess(df,int(userID))
-    preds = linearRegressionClass.predict(df,hrs)
-    #linearRegressionClass.update(df,hrs)
+    df = linearRegressionClass.preprocess(df,int(userID),"predict")
+    preds = linearRegressionClass.predict(df,hrs)    
     response=preds       
     return response.to_csv(index=False)    
 
@@ -315,26 +305,16 @@ def rnn_train():
     Rnn.train(df)
     return "Model Trained Successfully" 
 
-@app.route('/rnn/update',methods=['POST'])
-def rnn_update():
-    # file = request.files['file']
-    # userID = int(request.form['userID'])
-    # df = pd.read_csv(file)
-    # df = linearRegressionClass.preprocess(df,userID)
-    # linearRegressionClass.update(df)
-    return "Updated Model Successfully"
-
 @app.route('/rnn/predict',methods=['POST'])
 def rnn_predict():
     days = request.json['body']['days']
     hours = request.json['body']['hours']
     userID = request.json['body']['userID']
     #file = request.files['file']
-    df = pd.read_csv('newSeasonal.csv')
+    df = pd.read_csv('RNN_Predict.csv')
     hrs=int(days)*24 + int(hours)
     df = Rnn.preprocess(df,int(userID))
-    preds = Rnn.predict(df,hrs)
-    #Rnn.update(df,hrs)
+    preds = Rnn.predict(df,hrs)   
     response=preds
     print("response",response)
     return response.to_csv(index=False)   

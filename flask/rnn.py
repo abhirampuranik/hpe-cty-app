@@ -1,18 +1,19 @@
 import pandas as pd
 import numpy as np
-# %matplotlib inline
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.preprocessing.sequence import TimeseriesGenerator
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense,LSTM,SimpleRNN
 from tensorflow.keras.models import load_model
+# from sklearn.metrics import mean_squared_error
+# from math import sqrt
 
 class Rnn:
     def __init__():
         pass 
 
-    def preprocess(df,UserID):        
+    def preprocess(df,UserID,status):        
       df.index = df['Time']
       try:
           df = df[df["UserID"]==UserID]
@@ -20,8 +21,13 @@ class Rnn:
       except:
           df = df.drop(['Time'],axis=1)
           print("no UserID Col")
-      # print(df)
-      return df    
+      print(df.head())
+      #769 as 31 days + 24 hours
+      if(status=="train"):
+          df[-769:].to_csv('RNN_Predict.csv',index=False)
+          return df[:-769] 
+      elif(status=="predict"):
+          return df         
 
     def train(df):       
       test_point = -769      
