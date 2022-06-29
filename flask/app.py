@@ -14,7 +14,6 @@ from dateGen import DateGen
 from dateGenML import DateGenML
 from DateGenP import DateGenP
 from rnn import Rnn
-# from ML import MLModelsClass
 from flask import Flask, flash, request, redirect, url_for, session, Response
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
@@ -113,7 +112,7 @@ def autoarima_train():
     userID = int(request.form['userID'])
     df = pd.read_csv(file)
     df = AutoArima.preprocess(df,userID)
-    AutoArima.train(df)
+    AutoArima.train(df, userID)
     return "Model Trained Successfully"
 
 @app.route('/autoarima/update',methods=['POST'])
@@ -122,7 +121,7 @@ def autoarima_update():
     userID = int(request.form['userID'])
     df = pd.read_csv(file)
     df = AutoArima.preprocess(df,userID)
-    AutoArima.update(df)
+    AutoArima.update(df, userID)
     return "Updated Model Successfully"
 
 @app.route('/autoarima/predict',methods=['POST'])
@@ -131,10 +130,10 @@ def autoarima_predict():
     hours = request.json['body']['hours']
     userID = request.json['body']['userID']
     dg = DateGen()
-    fil = open('arima.txt','r')
+    fil = open('arima' + str(userID) + '.txt','r')
     df = dg.date_df(int(days)*24 + int(hours), int(userID),fil.readline().strip())
     fil.close()
-    preds = AutoArima.predict(df)
+    preds = AutoArima.predict(df, userID)
     response=preds
     return response.to_csv()
 
@@ -319,56 +318,6 @@ def rnn_predict():
     print("response",response)
     return response.to_csv(index=False)   
 
-# ML Models
-
-@app.route('/mlmodels',methods=['POST'])
-def MLModels():
-    file = request.files['file'] 
-    df = pd.read_csv(file)
-    preds = MLModelsClass.model(df)
-    print(preds)
-    response = preds
-    return response.to_csv()
-
-# @app.route('/linearRegression',methods=['POST'])
-# def linearRegression():
-#     file = request.files['file'] 
-#     df = pd.read_csv(file)
-#     preds = linearRegressionClass.model(df)
-#     print(preds)
-#     response = preds
-#     return response.to_csv()     
-
-# @app.route('/randomForest',methods=['POST'])
-# def randomForest():
-#     file = request.files['file'] 
-#     df = pd.read_csv(file)
-#     preds = randomForestClass.model(df)
-#     print(preds)
-#     response = preds
-#     return response.to_csv()       
-
-# @app.route('/XGB',methods=['POST'])
-# def XGB():
-#     file = request.files['file'] 
-#     df = pd.read_csv(file)
-#     preds = XGBClass.model(df)
-#     print(preds)
-#     response = preds
-
-# @app.route('/MultinomialNaiveBayes',methods=['POST'])
-# def MultinomialNaiveBayes():
-#     file = request.files['file'] 
-#     df = pd.read_csv(file)
-#     preds = MultinomialNaiveBayesClass.model(df)
-#     print(preds)
-#     response = preds    
-
-# @app.route('/dateGen',methods=['GET'])
-# def dategenerator():
-#     df = DateGen.date_df(5,1)
-#     response = df
-#     return response.to_csv()
 
 
 @app.route('/liststorages')

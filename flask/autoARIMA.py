@@ -19,7 +19,7 @@ class AutoArima:
             print("no UserID Col")
         return df
 
-    def train(df):
+    def train(df, userID):
         train = df
         from pmdarima.arima import auto_arima
         arima_model = auto_arima(train, start_p=0, d=1, start_q=0,
@@ -30,24 +30,24 @@ class AutoArima:
         supress_warnings=True, stepwise = True,
         random_state=20,n_fits = 50)
         arima_model.summary()
-        with open('arima.pkl', 'wb') as pkl:
+        with open('arima' + str(userID) + '.pkl', 'wb') as pkl:
             pickle.dump(arima_model, pkl)
         last_date = train.index[-1]
-        with open('arima.txt','w') as fil:
+        with open('arima' + str(userID) + '.txt','w') as fil:
             fil.write(last_date)
     
-    def predict(test):
+    def predict(test, userID):
         test_size = len(test)
-        with open('arima.pkl', 'rb') as pkl:
+        with open('arima' + str(userID) + '.pkl', 'rb') as pkl:
             prediction = pd.DataFrame(pickle.load(pkl).predict(n_periods=test_size),index=test.index)
             prediction.columns = ['Usage']
             return prediction
 
-    def update(df):
-        with open('arima.pkl', 'rb') as pkl:
+    def update(df, userID):
+        with open('arima' + str(userID) + '.pkl', 'rb') as pkl:
             arima_model = pickle.load(pkl).update(df)
-            with open('arima.pkl', 'wb') as pkl:
+            with open('arima' + str(userID) + '.pkl', 'wb') as pkl:
                 pickle.dump(arima_model, pkl)
         last_date = df.index[-1]
-        with open('arima.txt','w') as fil:
+        with open('arima' + str(userID) + '.txt','w') as fil:
             fil.write(last_date)
