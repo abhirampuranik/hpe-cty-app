@@ -84,26 +84,6 @@ def stream():
     # response.headers['Content-Disposition'] = 'attachment; filename=data.csv'
     return response
 
-# @app.route('/stream',methods=['GET'])
-# def stream():
-#     dg = DateGen()
-#     # file = request.files['file'] 
-#     df = pd.read_csv("storage_train.csv")
-#     df_prep = linearRegressionClass.preprocess(df,1)
-#     linearRegressionClass.train(df_prep[:50])
-#     for i in range(50,len(df_prep)):
-#         linearRegressionClass.update(df_prep[i:i+1])
-#         df = dg.date_df(10,1)
-#         preds = linearRegressionClass.predict(df)
-#         print(preds)
-#         print(df_prep[i-5:i])
-        
-#         final_df = df_prep[i-5:i].append(preds)
-#         print(final_df)
-#         time.sleep(10)
-#     return "Model Streaming"
-
-
 # AutoArima
 
 @app.route('/autoarima/train',methods=['POST'])
@@ -137,7 +117,6 @@ def autoarima_predict():
     response=preds
     return response.to_csv()
 
-
 # Linear Regression
 
 @app.route('/linearRegression/train',methods=['POST'])
@@ -154,7 +133,7 @@ def linearRegression_predict():
     days = request.json['body']['days']
     hours = request.json['body']['hours']
     userID = request.json['body']['userID']
-    #file = request.files['file']
+  
     df = pd.read_csv('LR_Predict.csv')
     hrs=int(days)*24 + int(hours)
     df = linearRegressionClass.preprocess(df,int(userID),"predict")
@@ -193,7 +172,6 @@ def randomForest_predict():
     response=preds
     return response.to_csv()
 
-
 #MNB
 
 @app.route('/multinomialNaiveBayes/train',methods=['POST'])
@@ -213,8 +191,7 @@ def multinomialNaiveBayes_update():
     df = pd.read_csv(file)
     df = MultinomialNaiveBayesClass.preprocess(df)
     MultinomialNaiveBayesClass.update(df)
-    return "Updated Model Successfully" 
-
+    return "Updated Model Successfully"
 
 @app.route('/multinomialNaiveBayes/predict',methods=['POST'])
 def multinomialNaiveBayes_predict():
@@ -225,8 +202,6 @@ def multinomialNaiveBayes_predict():
     # print(preds)
     response=preds
     return response.to_csv()
-
-
 
 # XGB
 
@@ -239,8 +214,7 @@ def xgb_train():
     preds = XGBClass.predict(test)
     print(preds)
     response=preds
-    return response.to_csv()               
-
+    return response.to_csv()   
 
 @app.route('/xgb/update',methods=['POST'])
 def xgb_update():
@@ -309,7 +283,7 @@ def rnn_predict():
     days = request.json['body']['days']
     hours = request.json['body']['hours']
     userID = request.json['body']['userID']
-    #file = request.files['file']
+
     df = pd.read_csv('RNN_Predict.csv')
     hrs=int(days)*24 + int(hours)
     df = Rnn.preprocess(df,int(userID),"predict")

@@ -17,8 +17,7 @@ class Rnn:
       if(status=="train"):
           df = df[df["UserID"]==UserID] 
           df[:].to_csv('RNN_Predict.csv',index=False)
-
-      #df.index = df['Time']
+     
       try:
           df = df[df["UserID"]==UserID]
           df.index = df['Time']
@@ -28,8 +27,7 @@ class Rnn:
           print("no UserID Col")
       print(df.head())
       #769 as 31 days + 24 hours
-      if(status=="train"):
-          #df[-769:].to_csv('RNN_Predict.csv',index=False)
+      if(status=="train"):          
           return df[:-769] 
       elif(status=="predict"):
           return df         
@@ -70,7 +68,7 @@ class Rnn:
       batch_size = 1 #Number of timeseries samples in each batch   
       n_features = 1
       model = load_model('RNN'+ str(userID) +'.h5')
-      # summarize model.
+      # summarize model
       model.summary()
       test_predictions = []
       first_eval_batch = scaled_train[-length:]
