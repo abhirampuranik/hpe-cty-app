@@ -33,12 +33,13 @@ class linearRegressionClass:
 			print("no UserID Col")     
 		print(df.head())
 	    #769 as 31 days + 24 hours
-		if(status=="train"):		
+		if(status=="train"):	
+			print("last row:",df[:-769])	
 			return df[:-769]
-		else:
+		elif(status=="predict"):
 			return df	
 
-	def train(df):  	
+	def train(df,userID):  	
 		lin_model=LinearRegression()		
 		x1,x2,x3,y=df['Usage_LastHour'],df['Usage_2Hoursback'],df['Usage_3Hoursback'],df['Usage']
 		x1,x2,x3,y=np.array(x1),np.array(x2),np.array(x3),np.array(y)
@@ -51,10 +52,10 @@ class linearRegressionClass:
 		#X_train,y_train=final_x[:-769],y[:-769]
 		X_train,y_train=final_x,y	
 		lin_model.fit(X_train,y_train) 
-		with open('LinearRegression.pkl', 'wb') as pkl:
+		with open('LinearRegression'+ str(userID) + '.pkl', 'wb') as pkl:
 			pickle.dump(lin_model, pkl)
 		
-	def predict(df,hrs):
+	def predict(df,hrs,userID):
 		#lin_model=LinearRegression()
 		x1,x2,x3,y=df['Usage_LastHour'],df['Usage_2Hoursback'],df['Usage_3Hoursback'],df['Usage']
 		x1,x2,x3,y=np.array(x1),np.array(x2),np.array(x3),np.array(y)
@@ -70,7 +71,7 @@ class linearRegressionClass:
 		#X_train,X_test,y_train,y_test=final_x[:-769],final_x[-769:-769+hrs],y[:-769],y[-769:-769+hrs]
 		X_test,y_test=final_x[:hrs],y[:hrs]
 		#lin_model.fit(X_train,y_train) 
-		with open('LinearRegression.pkl', 'rb') as pkl:
+		with open('LinearRegression'+ str(userID) + '.pkl', 'rb') as pkl:
 			#prediction = pd.DataFrame(pickle.load(pkl).predict(X_test))
 			prediction = pickle.load(pkl).predict(X_test)
 			# print(prediction)

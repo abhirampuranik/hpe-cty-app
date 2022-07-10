@@ -13,10 +13,15 @@ class Rnn:
     def __init__():
         pass 
 
-    def preprocess(df,UserID,status):        
-      df.index = df['Time']
+    def preprocess(df,UserID,status):  
+      if(status=="train"):
+          df = df[df["UserID"]==UserID] 
+          df[:].to_csv('RNN_Predict.csv',index=False)
+
+      #df.index = df['Time']
       try:
           df = df[df["UserID"]==UserID]
+          df.index = df['Time']
           df = df.drop(['Time','UserID'],axis=1)
       except:
           df = df.drop(['Time'],axis=1)
@@ -24,19 +29,19 @@ class Rnn:
       print(df.head())
       #769 as 31 days + 24 hours
       if(status=="train"):
-          df[-769:].to_csv('RNN_Predict.csv',index=False)
+          #df[-769:].to_csv('RNN_Predict.csv',index=False)
           return df[:-769] 
       elif(status=="predict"):
           return df         
 
-    def train(df):       
+    def train(df,userID):       
       test_point = -769      
       train = df.iloc[:test_point]
-      #test = df.iloc[test_point:]
+      test = df.iloc[test_point:]
       scaler = MinMaxScaler()
       scaler.fit(train)
       scaled_train = scaler.transform(train)
-      #scaled_test = scaler.transform(test)
+      scaled_test = scaler.transform(test)
       length = 18 # Length of the output sequences (in number of timesteps)
       batch_size = 1 #Number of timeseries samples in each batch
       generator = TimeseriesGenerator(scaled_train, scaled_train, length=length, batch_size=batch_size)
@@ -50,10 +55,10 @@ class Rnn:
       model.add(Dense(1))
       model.compile(optimizer='adam', loss='mse')
       model.fit_generator(generator,epochs=5)
-      model.save("model.h5")
+      model.save('RNN'+ str(userID) +'.h5')
       print("model saved")    
-
-    def predict(df,hrs): 
+      
+    def predict(df,hrs,userID): 
       test_point = -769      
       train = df.iloc[:test_point]
       test = df.iloc[test_point:test_point+hrs]
@@ -64,7 +69,7 @@ class Rnn:
       length = 18 # Length of the output sequences (in number of timesteps)
       batch_size = 1 #Number of timeseries samples in each batch   
       n_features = 1
-      model = load_model('model.h5')
+      model = load_model('RNN'+ str(userID) +'.h5')
       # summarize model.
       model.summary()
       test_predictions = []

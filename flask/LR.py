@@ -40,7 +40,7 @@ class linearRegressionClass:
 
 		return df
 
-	def train(df):  	
+	def train(df,userID):  	
 		lin_model=LinearRegression()		
 		x1,x2,x3,y=df['Usage_LastHour'],df['Usage_2Hoursback'],df['Usage_3Hoursback'],df['Usage']
 		x1,x2,x3,y=np.array(x1),np.array(x2),np.array(x3),np.array(y)
@@ -55,7 +55,7 @@ class linearRegressionClass:
 		#X_train,X_test,y_train,y_test=df[:-30],df[-30:],df[:-30],df[-30:]
 
 		lin_model.fit(X_train,y_train) 
-		with open('LinearRegression.pkl', 'wb') as pkl:
+		with open('LinearRegression'+ str(userID) + '.pkl', 'wb') as pkl:
 			pickle.dump(lin_model, pkl)
 		#return X_test 
 
@@ -68,7 +68,7 @@ class linearRegressionClass:
 	# 		print(prediction)
 	# 		return prediction
 
-	def predict(df):
+	def predict(df, userID):
 		#test_size = len(test)
 		x1,x2,x3,y=df['Usage_LastHour'],df['Usage_2Hoursback'],df['Usage_3Hoursback'],df['Usage']
 		x1,x2,x3,y=np.array(x1),np.array(x2),np.array(x3),np.array(y)
@@ -77,7 +77,7 @@ class linearRegressionClass:
 
 		X_train,X_test,y_train,y_test=final_x,final_x,y,y	
 
-		with open('LinearRegression.pkl', 'rb') as pkl:
+		with open('LinearRegression'+ str(userID) + '.pkl', 'rb') as pkl:
 			#prediction = pd.DataFrame(pickle.load(pkl).predict(n_periods=test_size),index=test.index)
 			prediction = pd.DataFrame(pickle.load(pkl).predict(X_test))
 			#lin_pred=lin_model.predict(X_test)

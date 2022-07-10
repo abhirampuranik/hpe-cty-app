@@ -146,7 +146,7 @@ def linearRegression_train():
     userID = int(request.form['userID'])
     df = pd.read_csv(file)    
     df = linearRegressionClass.preprocess(df,userID,"train")
-    linearRegressionClass.train(df)
+    linearRegressionClass.train(df, userID)
     return "Model Trained Successfully"   
 
 @app.route('/linearRegression/predict',methods=['POST'])
@@ -158,7 +158,7 @@ def linearRegression_predict():
     df = pd.read_csv('LR_Predict.csv')
     hrs=int(days)*24 + int(hours)
     df = linearRegressionClass.preprocess(df,int(userID),"predict")
-    preds = linearRegressionClass.predict(df,hrs)    
+    preds = linearRegressionClass.predict(df,hrs,userID)    
     response=preds       
     return response.to_csv(index=False)    
 
@@ -300,8 +300,8 @@ def rnn_train():
     file = request.files['file']
     userID = int(request.form['userID'])
     df = pd.read_csv(file)    
-    df = Rnn.preprocess(df,userID)
-    Rnn.train(df)
+    df = Rnn.preprocess(df,userID,"train")
+    Rnn.train(df,userID)
     return "Model Trained Successfully" 
 
 @app.route('/rnn/predict',methods=['POST'])
@@ -312,13 +312,11 @@ def rnn_predict():
     #file = request.files['file']
     df = pd.read_csv('RNN_Predict.csv')
     hrs=int(days)*24 + int(hours)
-    df = Rnn.preprocess(df,int(userID))
-    preds = Rnn.predict(df,hrs)   
+    df = Rnn.preprocess(df,int(userID),"predict")
+    preds = Rnn.predict(df,hrs,userID)   
     response=preds
     print("response",response)
     return response.to_csv(index=False)   
-
-
 
 @app.route('/liststorages')
 def list_storages():
