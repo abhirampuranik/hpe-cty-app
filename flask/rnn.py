@@ -6,8 +6,8 @@ from tensorflow.keras.preprocessing.sequence import TimeseriesGenerator
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense,LSTM,SimpleRNN
 from tensorflow.keras.models import load_model
-# from sklearn.metrics import mean_squared_error
-# from math import sqrt
+from sklearn.metrics import mean_squared_error
+from math import sqrt
 
 class Rnn:
     def __init__():
@@ -85,6 +85,11 @@ class Rnn:
       test['Predictions'] = true_predictions
       test['Time']=test.index
       test.reset_index(drop=True, inplace=True)
-      print(test)              
+      print(test)        
+
+      # rmse_rnn=sqrt(mean_squared_error(true_predictions,test))
+      # print('Mean Squared Error for RNN Model is:',rmse_rnn)
+	
       return test[['Time','Predictions']]
+      #return test[['Time','Usage']]
         

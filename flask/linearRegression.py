@@ -1,10 +1,20 @@
 import pandas as pd
 import numpy as np
+from sklearn import tree, model_selection
+from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
+# from sklearn.ensemble import RandomForestRegressor
+# import xgboost as xgb
+# from sklearn.naive_bayes import MultinomialNB
 import matplotlib.pyplot as plt
 import pickle
-# from sklearn.metrics import mean_squared_error
-# from math import sqrt
+from sklearn.metrics import mean_squared_error
+from math import sqrt
+lin_model=LinearRegression()
+#lin_model=RandomForestRegressor(n_estimators=100,max_features=3, random_state=1)
+#lin_model=xgb.XGBRegressor()
+#lin_model = MultinomialNB()
+kfold = model_selection.KFold(n_splits=10)
 
 class linearRegressionClass:
 	def __init__():
@@ -13,7 +23,7 @@ class linearRegressionClass:
 	def preprocess(df,UserID,status):
 		if(status=="train"):
 			df = df[df["UserID"]==UserID]	
-			df[-769:].to_csv('LR_Predict.csv',index=False)	 
+			df[-772:].to_csv('LR_Predict.csv',index=False)	 
 
 		try:
 			df = df[df["UserID"]==UserID]
@@ -35,7 +45,7 @@ class linearRegressionClass:
 			return df	
 
 	def train(df,userID):  	
-		lin_model=LinearRegression()		
+		# lin_model=LinearRegression()		
 		x1,x2,x3,y=df['Usage_LastHour'],df['Usage_2Hoursback'],df['Usage_3Hoursback'],df['Usage']
 		x1,x2,x3,y=np.array(x1),np.array(x2),np.array(x3),np.array(y)
 		x1,x2,x3,y=x1.reshape(-1,1),x2.reshape(-1,1),x3.reshape(-1,1),y.reshape(-1,1)
@@ -45,6 +55,22 @@ class linearRegressionClass:
 		
 		X_train,y_train=final_x,y	
 		lin_model.fit(X_train,y_train) 
+
+		scoring = "neg_mean_absolute_error"
+		results = model_selection.cross_val_score(lin_model, X_train, y_train, cv=kfold, scoring=scoring)
+		# print("Mean Absolute Error: ", results.mean()) 
+		# print("Standard Deviation: ", results.std())
+
+		scoring = "neg_mean_squared_error"
+		results = model_selection.cross_val_score(lin_model, X_train, y_train, cv=kfold, scoring=scoring)
+		# print("Mean Squared Error: ", results.mean())
+		# print("Standard Deviation: ", results.std())
+
+		scoring = "r2"
+		results = model_selection.cross_val_score(lin_model, X_train, y_train, cv=kfold, scoring=scoring)
+		print("R squared val: ", results.mean())
+		print("Standard Deviation: ", results.std())
+
 		with open('LinearRegression'+ str(userID) + '.pkl', 'wb') as pkl:
 			pickle.dump(lin_model, pkl)
 		
@@ -68,5 +94,10 @@ class linearRegressionClass:
 			test['Time']=test.index
 			test.reset_index(drop=True, inplace=True)
 			print(test[['Time','Linear_Regression_Predictions']])
+			rmse_lr=sqrt(mean_squared_error(prediction,y_test))
+			print('Mean Squared Error for Linear Regression Model is:',rmse_lr)
+			r2_score = lin_model.score(X_test,y_test)
+			print("r2_score",r2_score*100,'%')
+			#print(test)
 			return test[['Time','Linear_Regression_Predictions']]			
 	
