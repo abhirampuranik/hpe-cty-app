@@ -1,6 +1,7 @@
 from operator import index
 import time
 import os
+import json
 from urllib import request
 import pandas as pd
 from sqlalchemy import false
@@ -137,9 +138,15 @@ def linearRegression_predict():
     df = pd.read_csv('LR_Predict.csv')
     hrs=int(days)*24 + int(hours)
     df = linearRegressionClass.preprocess(df,int(userID),"predict")
-    preds = linearRegressionClass.predict(df,hrs,userID)    
-    response=preds       
-    return response.to_csv(index=False)    
+    preds, r2_score = linearRegressionClass.predict(df,hrs,userID)    
+    response=preds  
+    print("R2:",r2_score)
+    output = {"csv":response.to_csv(index=False), "R2":r2_score} 
+    #output = {"csv":response.to_csv(index=False)}  
+    print(output["csv"])  
+    print(type(output["csv"])) 
+    #return response.to_csv(index=False)
+    return json.dumps(output)   
 
 # Random Forest
 
@@ -287,10 +294,14 @@ def rnn_predict():
     df = pd.read_csv('RNN_Predict.csv')
     hrs=int(days)*24 + int(hours)
     df = Rnn.preprocess(df,int(userID),"predict")
-    preds = Rnn.predict(df,hrs,userID)   
+    # preds, r2_score = Rnn.predict(df,hrs,userID) 
+    preds = Rnn.predict(df,hrs,userID)  
     response=preds
     print("response",response)
+    #print("R2:",r2_score)
+    #output = {"csv":response.to_csv(index=False), "R2":r2_score}
     return response.to_csv(index=False)   
+    #return output
 
 @app.route('/liststorages')
 def list_storages():

@@ -99,5 +99,5 @@ class linearRegressionClass:
 			r2_score = lin_model.score(X_test,y_test)
 			print("r2_score",r2_score*100,'%')
 			#print(test)
-			return test[['Time','Linear_Regression_Predictions']]			
+			return test[['Time','Linear_Regression_Predictions']],str(r2_score*100)+"%"	
 	
