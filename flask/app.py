@@ -65,14 +65,14 @@ def stream():
     df = pd.read_csv("storage_train.csv")
     df_prep = AutoArima.preprocess(df,1)
     dg = DateGen()
-    AutoArima.train(df_prep[:50])
+    AutoArima.train(df_prep[:50],1)
     def getdata():
         # file = request.files['file'] 
         
         for i in range(50,len(df_prep)):
-            AutoArima.update(df_prep[i:i+1])
+            AutoArima.update(df_prep[i:i+1], 1)
             df = dg.date_df(5,1,df_prep.index[i])
-            preds = AutoArima.predict(df)
+            preds = AutoArima.predict(df,1)
             final_df = df_prep[49:i].append(preds)
             s = final_df.to_csv().replace('\r\n', '$')
             #gotcha

@@ -1,6 +1,5 @@
 // import { Home } from '@mui/icons-material';
 import React, { useState, useEffect, cloneElement } from 'react';
-import Chart from "react-google-charts";
 import axios from 'axios'
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
@@ -24,10 +23,13 @@ function TransitionRight(props) {
 
 export default function HomePage() {
 
-    let valueList=[];
+
+    // outputArray - Plot data
+    // outputArray1 - predict data
+    
     const [file, setFile] = useState();
     const [outputArray, setoutputArray] = useState([]);
-    const [getMessage, setGetMessage] = useState({})
+    const [getMessage, setGetMessage] = useState({});
     const [getMessage1, setGetMessage1] = useState({});
     const [List,setList]=useState([]);
     
@@ -39,14 +41,14 @@ export default function HomePage() {
     const [listDays, setListDays] = useState([]);
     const [listHours, setListHours] = useState([]);
 
-
-    
     const [action, setAction] = useState('train');
 
     const [processed, setProcessed] = useState(false);
     const [processing, setProcessing] = useState(false);
 
     const [predcsv, setpredcsv] = useState("");
+    const [r2, setR2] = useState("");
+
     const [outputArray1, setoutputArray1] = useState([]);
     const [List1,setList1]=useState([]);
     const [SnackbarString,setSnackbarString]=useState('');
@@ -60,7 +62,6 @@ export default function HomePage() {
         if (reason === 'clickaway') {
             return;
         }
-
         setOpen({open:false});
     };
 
@@ -68,9 +69,7 @@ export default function HomePage() {
         setModel(event.target.value);
     };
 
-      
     const {open} = state;
-
 
     const handleOnChange = (e) => {
         setFile(e.target.files[0]);        
@@ -79,7 +78,6 @@ export default function HomePage() {
     function range(start, end) {
         return Array(end - start + 1).fill().map((_, idx) => start + idx)
     }
-
 
     useEffect(()=>{
 
@@ -90,25 +88,14 @@ export default function HomePage() {
           console.log(error)
         })
 
-
         setListDays(range(0, 31));
-        setListHours(range(0,24));
-        
-    
+        setListHours(range(0,24));  
       }, [])
     
-    useEffect(()=>{
-        console.log(listDays)
-        console.log(listHours)
-
-    },[listDays])
-
 
     const handleOnSubmit = (e) => {
         e.preventDefault();
         
-        // fun1();
-
         let file1 = file;
         const formData = new FormData();
         formData.append("file", file1);
@@ -151,52 +138,38 @@ export default function HomePage() {
 
     useEffect(() => {
         console.log("output array",outputArray)
-        
+        let valueList=[];
         outputArray.map((record)=>{
                 valueList.push([record.split(',')[0], record.split(',')[1]])
-            });
-        
-            
+            });  
         valueList.unshift([{ type: 'string', label: 'Time' },{label:'Storage Consumption',type:'number'}])
         setList(valueList);
         console.log("List values",valueList)
      }, [outputArray]);
 
-
-
     // Prediction graph data
-
-     useEffect(() => {
-        setoutputArray1(predcsv.split('\n'));
-    }, [predcsv]);
 
     useEffect(() => {
         console.log(List1)
     }, [List1]);
 
-
-
     useEffect(() => {
         let valueList1 = []
-
         outputArray1.map((record)=>(valueList1.push([record.split(',')[0], record.split(',')[1]])));
-        // // outputArray1.map((record)=>(valueList1.push([record.split('  ')[0], record.split('  ')[1].split(',')[0]])));
         valueList1.unshift([{ type: 'string', label: 'Time' },{label:'Forecast',type:'number'}]);
-        setList1(valueList1);
-        // console.log("output array1 from flask", outputArray1)
-        // console.log("value list 1",valueList1)
-
-    
-        
+        setList1(valueList1);   
     }, [outputArray1]);
 
 
 
     const sendCSV = (e) => {
         e.preventDefault();
-        setProcessing(true);
 
- 
+        if(model !== ''){
+            setProcessing(true);
+        }
+        
+
         let file1 = file;
         const formData = new FormData();
 
@@ -204,7 +177,6 @@ export default function HomePage() {
         formData.append("userID", userID)
 
         if(model === 'autoarima'){
-
             if(action === 'train'){
                 axios.post('http://127.0.0.1:5000/autoarima/train', formData, 
                     {
@@ -217,12 +189,11 @@ export default function HomePage() {
                 })
                 .then(function (response) { 
                     console.log(response.data);
-                    setpredcsv(response.data);
                     setProcessing(false);
                     setProcessed(true);
                     setOpen({open:true});
                 })
-            }else if(action === 'predict'){
+            } else if(action === 'predict') {
                 axios.post('http://127.0.0.1:5000/autoarima/predict', {
                 headers: {
                 'Content-Type': 'application/json'
@@ -235,7 +206,7 @@ export default function HomePage() {
                 } )
                 .then(function (response) { 
                     console.log(response.data);
-                    setpredcsv(response.data);
+                    setoutputArray1(response.data.split('\n'));
                     setProcessing(false);
                     setProcessed(true);
                 })
@@ -250,17 +221,12 @@ export default function HomePage() {
                 } )
                 .then(function (response) { 
                     console.log(response.data);
-                    // setpredcsv(response.data);
                     setSnackbarString(response.data)
                     setProcessing(false);
                     setProcessed(true);
                     setOpen({open:true});
                 })
             }
-
-            
-
-
         }else if(model === 'prophet'){
             if(action ==='train'){
                 axios.post('http://127.0.0.1:5000/prophet/train', formData, {
@@ -270,7 +236,6 @@ export default function HomePage() {
             } )
             .then(function (response) {
                 console.log(response.data);
-                setpredcsv(response.data);
                 setProcessing(false);
                 setProcessed(true);
                 setOpen({open:true});
@@ -289,7 +254,7 @@ export default function HomePage() {
             } )
             .then(function (response) {
                 console.log(response.data);
-                setpredcsv(response.data);
+                setoutputArray1(response.data.split('\n'));
                 setProcessing(false);
                 setProcessed(true);
                 setOpen({open:true});
@@ -308,7 +273,6 @@ export default function HomePage() {
                 })
                 .then(function (response) { 
                     console.log(response.data);
-                    setpredcsv(response.data);
                     setProcessing(false);
                     setProcessed(true);
                     setOpen({open:true});
@@ -326,7 +290,7 @@ export default function HomePage() {
                 } )
                 .then(function (response) { 
                     console.log(response.data);
-                    setpredcsv(response.data);
+                    setoutputArray1(response.data.split('\n'));
                     setProcessing(false);
                     setProcessed(true);
                 })
@@ -345,7 +309,6 @@ export default function HomePage() {
                 } )
                 .then(function (response) { 
                     console.log(response.data);
-                    setpredcsv(response.data);
                     setProcessing(false);
                     setProcessed(true);
                     setOpen({open:true});
@@ -363,25 +326,17 @@ export default function HomePage() {
                 } )
                 .then(function (response) { 
                     console.log(response.data);
-                    setpredcsv(response.data);
+                    setoutputArray1(response.data.csv.split('\n'));
+                    setR2(response.data.R2);
                     setProcessing(false);
                     setProcessed(true);
                 })
             }
         }
-
-        
-          
     }
-
-    
-
-    
 
     return (
         <div style={{ textAlign: "center", alignContent:"center", alignItems:"center" }}>
-            
-        
         <div style={{ textAlign: "center" , alignContent:'center'}}>
             <h1>Upload your data</h1>
             <div>{getMessage1.status === 200 ? 
@@ -390,208 +345,198 @@ export default function HomePage() {
                 <h3>LOADING</h3>}
             </div>
 
-                <div style={{alignItems:'center',justifyContent:'center', width:1000, margin:'0px auto'}}>
-                    <Box justify = "center">
-                    <FormControl sx={{ m: 1, minWidth: 250 }}>
-                        <InputLabel id="demo-simple-select-label">Select Model</InputLabel>
-                        <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={model}
-                        label="Model"
-                        onChange={handleChangeOnModel}
-                        >
-                        <MenuItem value={'autoarima'}>AutoArima</MenuItem>
-                        <MenuItem value={'prophet'}>Prophet</MenuItem>
-                        <MenuItem value={'rnn'}>RNN</MenuItem>
-                        <MenuItem value={'linearregression'}>Linear Regression</MenuItem>
-                        </Select>
-                    </FormControl>
-                    
-
-                    <FormControl sx={{ m: 1, minWidth: 120 }}>
-                        <InputLabel id="demo-simple-select-label">User ID</InputLabel>
-                        <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={userID}
-                        label="Model"
-                        onChange={(event)=>{setUserID(event.target.value)}}
-                        >
-                        <MenuItem value={'1'}>1</MenuItem>
-                        <MenuItem value={'2'}>2</MenuItem>
-                        <MenuItem value={'3'}>3</MenuItem>
-                        <MenuItem value={'4'}>4</MenuItem>
-
-                        </Select>
-                    </FormControl>
-                    </Box>
-
-
-
-                </div>
-                    
-                <br/>
+            <div style={{alignItems:'center',justifyContent:'center', width:1000, margin:'0px auto'}}>
+                <Box justify = "center">
+                <FormControl sx={{ m: 1, minWidth: 250 }}>
+                    <InputLabel id="demo-simple-select-label">Select Model</InputLabel>
+                    <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={model}
+                    label="Model"
+                    onChange={handleChangeOnModel}
+                    >
+                    <MenuItem value={'autoarima'}>AutoArima</MenuItem>
+                    <MenuItem value={'prophet'}>Prophet</MenuItem>
+                    <MenuItem value={'rnn'}>RNN</MenuItem>
+                    <MenuItem value={'linearregression'}>Linear Regression</MenuItem>
+                    </Select>
+                </FormControl>
                 
-                {model==='autoarima'?
-                    <FormControl>
-                    <FormLabel id="demo-row-radio-buttons-group-label">Action</FormLabel>
-                    <RadioGroup
-                        row
-                        aria-labelledby="demo-row-radio-buttons-group-label"
-                        name="row-radio-buttons-group"
-                        value={action}
-                        onChange={handleChangeAction}
+
+                <FormControl sx={{ m: 1, minWidth: 120 }}>
+                    <InputLabel id="demo-simple-select-label">User ID</InputLabel>
+                    <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={userID}
+                    label="Model"
+                    onChange={(event)=>{setUserID(event.target.value)}}
                     >
-                        <FormControlLabel value="train" control={<Radio />} label="Train" />
-                        <FormControlLabel value="predict" control={<Radio />} label="Predict" />
-                        <FormControlLabel value="update" control={<Radio />} label="Update" />
-                    </RadioGroup>
-                    </FormControl>
+                    <MenuItem value={'1'}>1</MenuItem>
+                    <MenuItem value={'2'}>2</MenuItem>
+                    <MenuItem value={'3'}>3</MenuItem>
+                    <MenuItem value={'4'}>4</MenuItem>
+
+                    </Select>
+                </FormControl>
+                </Box>
+            </div>
+            <br/>  
+            {model==='autoarima'?
+                <FormControl>
+                <FormLabel id="demo-row-radio-buttons-group-label">Action</FormLabel>
+                <RadioGroup
+                    row
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    name="row-radio-buttons-group"
+                    value={action}
+                    onChange={handleChangeAction}
+                >
+                    <FormControlLabel value="train" control={<Radio />} label="Train" />
+                    <FormControlLabel value="predict" control={<Radio />} label="Predict" />
+                    <FormControlLabel value="update" control={<Radio />} label="Update" />
+                </RadioGroup>
+                </FormControl>
+
+                :model==='prophet' || model==='linearregression' || model === 'rnn'?
+                <FormControl>
+                <FormLabel id="demo-row-radio-buttons-group-label">Action</FormLabel>
+                <RadioGroup
+                    row
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    name="row-radio-buttons-group"
+                    value={action}
+                    onChange={handleChangeAction}
+                >
+                    <FormControlLabel value="train" control={<Radio />} label="Train" />
+                    <FormControlLabel value="predict" control={<Radio />} label="Predict" />
+                </RadioGroup>
+                </FormControl>:<span></span>
+            }
+
+            {action === 'predict' ?
+
                     
-                    
-                    
-                    :model==='prophet' || model==='linearregression' || model === 'rnn'?
-                    <FormControl>
-                    <FormLabel id="demo-row-radio-buttons-group-label">Action</FormLabel>
-                    <RadioGroup
-                        row
-                        aria-labelledby="demo-row-radio-buttons-group-label"
-                        name="row-radio-buttons-group"
-                        value={action}
-                        onChange={handleChangeAction}
-                    >
-                        <FormControlLabel value="train" control={<Radio />} label="Train" />
-                        <FormControlLabel value="predict" control={<Radio />} label="Predict" />
-                    </RadioGroup>
-                    </FormControl>:<span></span>
-                }
-
-                {action === 'predict' && (model === 'autoarima' || model==='linearregression'|| model === 'rnn' || model === 'prophet')?
-                    <div>
-                        <br/>
-                        <div style={{alignItems:'center',justifyContent:'center', width:150, margin:'0px auto'}}>
-                                <Box justify = "center" sx={{margin:'15px auto'}}>
-                                <FormControl fullWidth>
-                                    <InputLabel id="demo-simple-select-label">Days</InputLabel>
-                                    <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={nextDays}
-                                    label="Model"
-                                    onChange={(event)=>{setNextDays(event.target.value)}}
-                                    >
-                                    
-                                    {
-                                    listDays.map((row, index)=>(
-                                        <MenuItem key={index} value={row}>{row}</MenuItem>
-                                    ))}
-
-                                    </Select>
-                                </FormControl>
-                            </Box>
-                            <Box justify = "center" sx={{margin:'15px auto'}}>
-                                <FormControl fullWidth>
-                                    <InputLabel id="demo-simple-select-label">Hours</InputLabel>
-                                    <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={nextHours}
-                                    label="Model"
-                                    onChange={(event)=>{setNextHours(event.target.value)}}
-                                    >
-                                    {
-                                    listHours.map((row)=>(
-                                        <MenuItem value={row}>{row}</MenuItem>
-                                    ))}
-                                    </Select>
-                                </FormControl>
-                            </Box>
-
-                        </div>
-
-
-                    </div> :
-                    
-                    <div>
-                        <Input 
-                        type='file'
-                        id='csvFileInput'
-                        onChange={handleOnChange}/>
-                        &nbsp;&nbsp;
-                        <Button variant="contained"
-                        onClick={(e) => {
-                            handleOnSubmit(e);
-                        }}
-                        >Import CSV and Plot</Button>
-
-                    </div>
-
-                }
-
-
-                {/* {model === 'autoarima'?
-                    <div style={{alignItems:'center',justifyContent:'center', width:150, margin:'0px auto'}}>
+                <div style={{alignItems:'center',justifyContent:'center', width:150, margin:'0px auto'}}>
                     <br/>
-                    <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">User ID</InputLabel>
-                        <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={userID}
-                        label="Model"
-                        onChange={(event)=>{setUserID(event.target.value)}}
-                        >
-                        <MenuItem value={'1'}>1</MenuItem>
-                        <MenuItem value={'2'}>2</MenuItem>
-                        <MenuItem value={'3'}>3</MenuItem>
-                        <MenuItem value={'3'}>4</MenuItem>
-                        </Select>
-                    </FormControl>
-                    </div>:<span></span>
-                } */}
-                <br/>
-                <Button variant="contained"
+                        <Box justify = "center" sx={{margin:'15px auto'}}>
+                        <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">Days</InputLabel>
+                            <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={nextDays}
+                            label="Model"
+                            onChange={(event)=>{setNextDays(event.target.value)}}
+                            >
+                            
+                            {
+                            listDays.map((row, index)=>(
+                                <MenuItem key={index} value={row}>{row}</MenuItem>
+                            ))}
+
+                            </Select>
+                        </FormControl>
+                    </Box>
+                    <Box justify = "center" sx={{margin:'15px auto'}}>
+                        <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">Hours</InputLabel>
+                            <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={nextHours}
+                            label="Model"
+                            onChange={(event)=>{setNextHours(event.target.value)}}
+                            >
+                            {
+                            listHours.map((row)=>(
+                                <MenuItem value={row}>{row}</MenuItem>
+                            ))}
+                            </Select>
+                        </FormControl>
+                    </Box>
+                    <br/>
+                    <Button variant="contained"
+                        onClick={(e) => {
+                            sendCSV(e);
+                        }}
+                        >Predict</Button>
+                </div>
+                :
+                model !== '' ?
+                <div>
+                    <Input 
+                    type='file'
+                    id='csvFileInput'
+                    onChange={handleOnChange}/>
+                    &nbsp;&nbsp;
+                    <Button variant="contained"
                     onClick={(e) => {
-                        sendCSV(e);
+                        handleOnSubmit(e);
                     }}
-                   >Send File</Button>
+                    >Import CSV and Plot</Button>
+                    <br/>
+                    <Button variant="contained"
+                        onClick={(e) => {
+                            sendCSV(e);
+                        }}
+                        >Send File</Button>
+                </div>:<span></span>
+            }
 
-                   
-      <Snackbar 
-      anchorOrigin={{ "vertical" : "top" , "horizontal" : "right" }}
-      open={open} 
-      autoHideDuration={10000} 
-      onClose={handleClose}
-      TransitionComponent = {TransitionRight}
-      >
-        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-          {
-            SnackbarString.length!==0? SnackbarString : ""
-          }
-        </Alert>
-      </Snackbar>
+
+            {/* {model === 'autoarima'?
+                <div style={{alignItems:'center',justifyContent:'center', width:150, margin:'0px auto'}}>
+                <br/>
+                <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">User ID</InputLabel>
+                    <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={userID}
+                    label="Model"
+                    onChange={(event)=>{setUserID(event.target.value)}}
+                    >
+                    <MenuItem value={'1'}>1</MenuItem>
+                    <MenuItem value={'2'}>2</MenuItem>
+                    <MenuItem value={'3'}>3</MenuItem>
+                    <MenuItem value={'3'}>4</MenuItem>
+                    </Select>
+                </FormControl>
+                </div>:<span></span>
+            } */}
+              
+            <Snackbar 
+                anchorOrigin={{ "vertical" : "top" , "horizontal" : "right" }}
+                open={open} 
+                autoHideDuration={10000} 
+                onClose={handleClose}
+                TransitionComponent = {TransitionRight}
+                >
+                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                {
+                    SnackbarString.length!==0? SnackbarString : ""
+                }
+                </Alert>
+            </Snackbar>
+                
+            </div>  
+            <br/>
+            {processing? <div><h1>Processing</h1><HourglassTopIcon/></div>:<span></span>}
+            <br/>
             
+            {outputArray.length!==0?
+                <ChartGraph List={List} color={"#c39ea0"} title={'Storage consumption (in MB)'}/>:<span></span>}
+
+            <br/>
+            
+            {action === 'predict' && (model === 'autoarima' || model === 'linearregression' || model === 'rnn' || model === 'prophet') && processed?<div><h1>Predictions</h1></div>:<span></span>}
+            
+            
+            {action === 'predict' && (model === 'autoarima' || model === 'linearregression' || model === 'rnn' || model === 'prophet') && processed?
+                <div><ChartGraph List={List1} color={"#fbf6a7"} title={"Storage Forecast consumption (in MB)"}/><h2>{r2}</h2></div>:<span></span>}
+
         </div>
-
-        
-        
-        <br/>
-        {processing? <div><h1>Processing</h1><HourglassTopIcon/></div>:<span></span>}
-        <br/>
-        
-        {outputArray.length!==0?
-            <ChartGraph List={List} color={"#c39ea0"} title={'Storage consumption (in MB)'}/>:<span></span>}
-
-        <br/>
-        
-        {action === 'predict' && (model === 'autoarima' || model === 'linearregression' || model === 'rnn' || model === 'prophet') && processed?<div><h1>Predictions</h1></div>:<span></span>}
-        
-        
-        {action === 'predict' && (model === 'autoarima' || model === 'linearregression' || model === 'rnn' || model === 'prophet') && processed?
-            <ChartGraph List={List1} color={"#fbf6a7"} title={"Storage Forecast consumption (in MB)"}/>:<span></span>}
-
-          
-        </div>
-      );
+    );
 }
