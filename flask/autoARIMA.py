@@ -3,7 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import pickle
-
+from sklearn.metrics import r2_score
+# test['predicted sales'] = prediction
+# r2_score(test[' Champagne sales'], test['predicted sales'])
 class AutoArima:
     def __init__(csv):
         pass

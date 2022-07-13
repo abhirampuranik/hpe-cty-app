@@ -16,7 +16,7 @@ class DateGen:
         time_t = []
         u_id = []
         for i in range(hr):
-            time_t.append(initTime + timedelta( hours=i ))
+            time_t.append(initTime + timedelta( hours=i+1 ))
             u_id.append(uID)
         df = pd.DataFrame({'Time':time_t,'UserID':u_id})
         df.index = df['Time']
