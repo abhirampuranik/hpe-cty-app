@@ -14,7 +14,7 @@ from ProphetAPI import ProphetClass
 from dateGen import DateGen
 from dateGenML import DateGenML
 from DateGenP import DateGenP
-# from rnn import Rnn
+from rnn import Rnn
 from flask import Flask, flash, request, redirect, url_for, session, Response
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
@@ -143,8 +143,8 @@ def linearRegression_predict():
     print("R2:",r2_score)
     output = {"csv":response.to_csv(index=False), "R2":r2_score} 
     #output = {"csv":response.to_csv(index=False)}  
-    print(output["csv"])  
-    print(type(output["csv"])) 
+    #print(output["csv"])  
+    #print(type(output["csv"])) 
     #return response.to_csv(index=False)
     return json.dumps(output)   
 
