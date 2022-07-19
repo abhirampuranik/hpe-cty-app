@@ -1,3 +1,4 @@
+from pickletools import read_uint1
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -45,7 +46,7 @@ class AutoArima:
         self.update(test,userID)
         test['predicted Usage'] = prediction
         acc = r2_score(test['Usage'], test['predicted Usage'])
-        print(acc)
+        return r2_score
 
     def predict(self,test, userID):
         test_size = len(test)

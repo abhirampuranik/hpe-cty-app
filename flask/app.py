@@ -226,6 +226,32 @@ def autoarima_predict():
 
 @app.route('/linearRegression/train',methods=['POST'])
 def linearRegression_train():
+    """ Training Linear Regression model with Storage dataset  
+    ---
+    consumes:
+      - "multipart/form-data"
+    produces:
+      - "string"
+    parameters:
+      - in: formData
+        name: file
+        description: Storage dataset
+        required: true
+        type: file
+      - in: formData
+        name: userID
+        description: User ID
+        required: true
+        type: integer
+    responses:
+      200:
+        description: Status
+        schema:
+          type: string
+        examples:
+          result: Model Trained Successfully
+          
+    """
     file = request.files['file']
     userID = int(request.form['userID'])
     df = pd.read_csv(file)    
@@ -235,6 +261,42 @@ def linearRegression_train():
 
 @app.route('/linearRegression/predict',methods=['POST'])
 def linearRegression_predict():
+    """ Future Predictions 
+      ---
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Accepts a input dictionary of Time and User ID"
+          required: true
+          schema:
+            type: json
+            properties:
+              days:
+                type: integer
+              hours:
+                type: integer
+              userID:
+                type: string
+          example: {"days": 2,"hours":5,"userID": 1}
+      responses:
+        200:
+          description: Status
+          schema:
+            type: object
+            properties:
+              days:
+                type: integer
+              hours:
+                type: integer
+              userID:
+                type: string
+          examples:
+            result: {"days": 2,"hours":5,"userID": 1}
+      """
     days = request.json['body']['days']
     hours = request.json['body']['hours']
     userID = request.json['body']['userID']
