@@ -19,10 +19,10 @@ export default function Storage()
     const [List, setList] = useState([]);
 
 
-    var valueList = []
-    // const handleChangeOnStorage = (event) => {
-    //     setStorage(event.target.value);
-    // };
+    
+    const handleChangeOnStorage = (event) => {
+        setStorage(event.target.value);
+    };
 
     // useEffect(()=>{
     //     // setListStorage(["Storage1", "Storage2","Storage3","Storage4"])
@@ -41,12 +41,12 @@ export default function Storage()
 
 
     useEffect(()=>{
-         const sse =  new EventSource('http://127.0.0.1:5000/stream')
-
+        const sse =  new EventSource('http://127.0.0.1:5000/stream')
+        
         function handleStream(e){
             console.log(e.data)
+            var valueList = []
             
-
             e.data.split('$').map((record)=>(valueList.push([record.split(',')[0], record.split(',')[1]])));
             valueList.unshift([{ type: 'string', label: 'Time' },{label:'Forecast',type:'number'}])
             setList(valueList);
@@ -62,10 +62,12 @@ export default function Storage()
         return () => {
             sse.close()
         }
-    });
+    },[]);
 
 
-    
+    useEffect(()=>{
+        console.log("List",List);
+    },[List])
     // useEffect(()=>{
     //     setoutputArray(predcsv.split('$'));
     // }, [predcsv]);
@@ -86,7 +88,7 @@ export default function Storage()
         <div style={{ textAlign: "center", alignContent:"center", alignItems:"center" }}>
             <h1>Storage</h1>
 
-            {/* <div style={{alignItems:'center',justifyContent:'center', width:500, margin:'0px auto'}}>
+            <div style={{alignItems:'center',justifyContent:'center', width:500, margin:'0px auto'}}>
                 <Box justify = "center">
                 <FormControl fullWidth>
                     <InputLabel id="demo-simple-select-label">Storage</InputLabel>
@@ -102,7 +104,8 @@ export default function Storage()
                     </Select>
                 </FormControl>
                 </Box>
-            </div> */}
+            </div>
+
 
 
             <Chart
@@ -130,10 +133,7 @@ export default function Storage()
                     title: 'Storage consumption (in MB)',
                 }
                 }}
-            />
-
-
-            
+            />            
         </div>
     )
 }
