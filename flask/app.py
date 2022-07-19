@@ -4,20 +4,21 @@ import os
 import json
 from urllib import request
 import pandas as pd
-from sqlalchemy import false
+# from sqlalchemy import false
 from autoARIMA import AutoArima
 from linearRegression import linearRegressionClass
 from randomForest import randomForestClass
 from xgb import XGBClass 
 from multinomialNaiveBayes import MultinomialNaiveBayesClass
-from ProphetAPI import ProphetClass
+# from ProphetAPI import ProphetClass
 from dateGen import DateGen
 from dateGenML import DateGenML
 from DateGenP import DateGenP
-from rnn import Rnn
+# from rnn import Rnn
 from flask import Flask, flash, request, redirect, url_for, session, Response
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
+from flasgger import Swagger
 
 UPLOAD_FOLDER = '/'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'csv'])
@@ -25,6 +26,7 @@ ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'csv'])
 STORAGES_LIST = ['Storage 1', 'Storage 2', 'Storage 3', 'Storage 4']
 
 app = Flask(__name__)
+swagger = Swagger(app)
 CORS(app)
 # app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -37,6 +39,23 @@ def get_current_time():
 
 @app.route('/hello')
 def hello_get():
+    """Test Endpoint to check if the flask server is running
+    ---
+
+    responses:
+      200:
+        description: Server Running
+        schema:
+          type: object
+          properties:
+            resultStatus:
+              type: string
+            message:
+              type: string
+          examples:
+            resultStatus: SUCCESS
+            message: Flask Running
+    """
     return{
         'resultStatus': 'SUCCESS',
         'message': 'Flask Running'
@@ -89,24 +108,108 @@ def stream():
 
 @app.route('/autoarima/train',methods=['POST'])
 def autoarima_train():
+    """Training Auto-ARIMA model with Storage dataset  
+    ---
+    consumes:
+      - "multipart/form-data"
+    produces:
+      - "string"
+    parameters:
+      - in: formData
+        name: file
+        description: Storage dataset
+        required: true
+        type: file
+      - in: formData
+        name: userID
+        description: User ID
+        required: true
+        type: integer
+    responses:
+      200:
+        description: Status
+        schema:
+          type: string
+        examples:
+          result: Model Trained Successfully
+          
+    """
+    aa = AutoArima()
     file = request.files['file']
     userID = int(request.form['userID'])
     df = pd.read_csv(file)
-    df = AutoArima.preprocess(df,userID)
-    AutoArima.train(df, userID)
+    df = aa.preprocess(df,userID)
+    aa.train(df, userID)
     return "Model Trained Successfully"
 
 @app.route('/autoarima/update',methods=['POST'])
 def autoarima_update():
+    """ Updating Auto-ARIMA model with new data  
+    ---
+    consumes:
+      - "multipart/form-data"
+    produces:
+      - "string"
+    parameters:
+      - in: formData
+        name: file
+        description: Storage dataset
+        required: true
+        type: file
+      - in: formData
+        name: userID
+        description: User ID
+        required: true
+        type: integer
+    responses:
+      200:
+        description: Status
+        schema:
+          type: string
+        examples:
+          result: Updated Model Successfully
+          
+    """
+    aa = AutoArima()
     file = request.files['file'] 
     userID = int(request.form['userID'])
     df = pd.read_csv(file)
-    df = AutoArima.preprocess(df,userID)
-    AutoArima.update(df, userID)
+    df = aa.preprocess(df,userID)
+    aa.update(df, userID)
     return "Updated Model Successfully"
 
 @app.route('/autoarima/predict',methods=['POST'])
 def autoarima_predict():
+    """ Future Predictions 
+    ---
+    consumes:
+      - "application/json"
+    produces:
+      - "application/json"
+    parameters:
+      - in: "body"
+        name: "body"
+        description: "Accepts a input dictionary of Time and User ID"
+        required: true
+        schema:
+          type: json
+          properties:
+            days:
+              type: integer
+            hours:
+              type: integer
+            userID:
+              type: string
+        example: {"days": 2,"hours":5,"userID": 1}
+    responses:
+      200:
+        description: Status
+        schema:
+          type: object
+        examples:
+          result: Model Trained Successfully
+    """
+    aa = AutoArima()
     days = request.json['body']['days']
     hours = request.json['body']['hours']
     userID = request.json['body']['userID']
@@ -114,7 +217,7 @@ def autoarima_predict():
     fil = open('arima' + str(userID) + '.txt','r')
     df = dg.date_df(int(days)*24 + int(hours), int(userID),fil.readline().strip())
     fil.close()
-    preds = AutoArima.predict(df, userID)
+    preds = aa.predict(df, userID)
     response=preds
     return response.to_csv()
 
