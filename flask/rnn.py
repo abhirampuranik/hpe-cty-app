@@ -8,6 +8,7 @@ from tensorflow.keras.layers import Dense,LSTM,SimpleRNN
 from tensorflow.keras.models import load_model
 from sklearn.metrics import mean_squared_error
 from math import sqrt
+from sklearn.metrics import r2_score
 
 class Rnn:
     def __init__():
@@ -87,7 +88,9 @@ class Rnn:
       test.reset_index(drop=True, inplace=True)
       print(test)        
 
-      # rmse_rnn=sqrt(mean_squared_error(true_predictions,test))
+      acc = r2_score(test['Usage'], test['Predictions'])
+      print(str(acc*100)+"%")
+      # rmse_rnn=sqrt(mean_squared_error(true_predictions,test['Usage']))
       # print('Mean Squared Error for RNN Model is:',rmse_rnn)
 	
       return test[['Time','Predictions']]

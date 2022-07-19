@@ -11,7 +11,7 @@ import pickle
 from sklearn.metrics import mean_squared_error
 from math import sqrt
 lin_model=LinearRegression()
-#lin_model=RandomForestRegressor(n_estimators=100,max_features=3, random_state=1)
+# lin_model=RandomForestRegressor(n_estimators=100,max_features=3, random_state=1)
 #lin_model=xgb.XGBRegressor()
 #lin_model = MultinomialNB()
 kfold = model_selection.KFold(n_splits=10)
@@ -98,6 +98,6 @@ class linearRegressionClass:
 			print('Mean Squared Error for Linear Regression Model is:',rmse_lr)
 			r2_score = lin_model.score(X_test,y_test)
 			print("r2_score",r2_score*100,'%')
-			#print(test)
+			print(test)
 			return test[['Time','Linear_Regression_Predictions']],str(r2_score*100)+"%"	
 	

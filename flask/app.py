@@ -14,7 +14,7 @@ from multinomialNaiveBayes import MultinomialNaiveBayesClass
 from dateGen import DateGen
 from dateGenML import DateGenML
 from DateGenP import DateGenP
-# from rnn import Rnn
+from rnn import Rnn
 from flask import Flask, flash, request, redirect, url_for, session, Response
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
@@ -401,7 +401,7 @@ def rnn_predict():
     # preds, r2_score = Rnn.predict(df,hrs,userID) 
     preds = Rnn.predict(df,hrs,userID)  
     response=preds
-    print("response",response)
+    #print("response",response)
     #print("R2:",r2_score)
     #output = {"csv":response.to_csv(index=False), "R2":r2_score}
     return response.to_csv(index=False)   
