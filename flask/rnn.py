@@ -36,7 +36,7 @@ class Rnn:
     def train(df,userID):       
       test_point = -769      
       train = df.iloc[:test_point]
-      test = df.iloc[test_point:]
+      test = df.iloc[test_point:test_point+10]      
       scaler = MinMaxScaler()
       scaler.fit(train)
       scaled_train = scaler.transform(train)
@@ -56,6 +56,29 @@ class Rnn:
       model.fit_generator(generator,epochs=5)
       model.save('RNN'+ str(userID) +'.h5')
       print("model saved")    
+
+      #R2 score
+      #test=10
+      test_predictions = []
+      first_eval_batch = scaled_train[-length:]
+      current_batch = first_eval_batch.reshape((1, length, n_features))
+      for i in range(len(test)):          
+          # get prediction 1 time stamp ahead ([0] is for grabbing just the number instead of [array])
+          current_pred = model.predict(current_batch)[0]          
+          # store prediction
+          test_predictions.append(current_pred)           
+          # update batch to now include prediction and drop first value
+          current_batch = np.append(current_batch[:,1:,:],[[current_pred]],axis=1)
+         
+      true_predictions = scaler.inverse_transform(test_predictions)    
+      # test['Predictions'] = true_predictions
+      # test['Time']=test.index
+      # test.reset_index(drop=True, inplace=True)
+      # print(test)        
+
+      acc = r2_score(test['Usage'], true_predictions)
+      print(str(acc*100)+"%")
+      return str(abs(acc)*100)+"%"
       
     def predict(df,hrs,userID): 
       test_point = -769      
@@ -88,8 +111,8 @@ class Rnn:
       test.reset_index(drop=True, inplace=True)
       print(test)        
 
-      acc = r2_score(test['Usage'], test['Predictions'])
-      print(str(acc*100)+"%")
+      # acc = r2_score(test['Usage'], test['Predictions'])
+      # print(str(acc*100)+"%")
       # rmse_rnn=sqrt(mean_squared_error(true_predictions,test['Usage']))
       # print('Mean Squared Error for RNN Model is:',rmse_rnn)
 	
