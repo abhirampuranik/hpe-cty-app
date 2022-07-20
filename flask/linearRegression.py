@@ -71,8 +71,13 @@ class linearRegressionClass:
 		print("R squared val: ", results.mean())
 		print("Standard Deviation: ", results.std())
 
+		r2_score = lin_model.score(X_train,y_train)
+		print("r2_score",r2_score*100,'%')
+
 		with open('LinearRegression'+ str(userID) + '.pkl', 'wb') as pkl:
 			pickle.dump(lin_model, pkl)
+
+		return str(r2_score*100)+'%'
 		
 	def predict(df,hrs,userID):		
 		x1,x2,x3,y=df['Usage_LastHour'],df['Usage_2Hoursback'],df['Usage_3Hoursback'],df['Usage']
@@ -95,9 +100,10 @@ class linearRegressionClass:
 			test.reset_index(drop=True, inplace=True)
 			print(test[['Time','Linear_Regression_Predictions']])
 			rmse_lr=sqrt(mean_squared_error(prediction,y_test))
-			print('Mean Squared Error for Linear Regression Model is:',rmse_lr)
-			r2_score = lin_model.score(X_test,y_test)
-			print("r2_score",r2_score*100,'%')
+			#print('Mean Squared Error for Linear Regression Model is:',rmse_lr)
+			# r2_score = lin_model.score(X_test,y_test)
+			# print("r2_score",r2_score*100,'%')
 			print(test)
-			return test[['Time','Linear_Regression_Predictions']],str(r2_score*100)+"%"	
+			return test[['Time','Linear_Regression_Predictions']]
+			#return test[['Time','Linear_Regression_Predictions']],str(r2_score*100)+"%"	
 	

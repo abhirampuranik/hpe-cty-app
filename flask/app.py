@@ -277,8 +277,8 @@ def linearRegression_train():
     userID = int(request.form['userID'])
     df = pd.read_csv(file)    
     df = linearRegressionClass.preprocess(df,userID,"train")
-    linearRegressionClass.train(df, userID)
-    return "Model Trained Successfully"   
+    r2_score = linearRegressionClass.train(df, userID)     
+    return json.dumps({"message":"Model Trained Successfully", "R2":r2_score})  
 
 @app.route('/linearRegression/predict',methods=['POST'])
 def linearRegression_predict():
@@ -328,15 +328,15 @@ def linearRegression_predict():
     df = pd.read_csv('LR_Predict.csv')
     hrs=int(days)*24 + int(hours)
     df = linearRegressionClass.preprocess(df,int(userID),"predict")
-    preds, r2_score = linearRegressionClass.predict(df,hrs,userID)    
+    preds = linearRegressionClass.predict(df,hrs,userID)    
     response=preds  
-    print("R2:",r2_score)
-    output = {"csv":response.to_csv(index=False), "R2":r2_score} 
+    # print("R2:",r2_score)
+    #output = {"csv":response.to_csv(index=False), "R2":r2_score} 
     #output = {"csv":response.to_csv(index=False)}  
     #print(output["csv"])  
     #print(type(output["csv"])) 
-    #return response.to_csv(index=False)
-    return json.dumps(output)   
+    return response.to_csv(index=False)
+    # return json.dumps(output)   
 
 # Random Forest
 
