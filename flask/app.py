@@ -4,7 +4,6 @@ import os
 import json
 from urllib import request
 import pandas as pd
-from pydantic import Json
 # from sqlalchemy import false
 from autoARIMA import AutoArima
 from linearRegression import linearRegressionClass
@@ -15,7 +14,7 @@ from multinomialNaiveBayes import MultinomialNaiveBayesClass
 from dateGen import DateGen
 from dateGenML import DateGenML
 from DateGenP import DateGenP
-# from rnn import Rnn
+from rnn import Rnn
 from flask import Flask, flash, request, redirect, url_for, session, Response
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
@@ -330,13 +329,7 @@ def linearRegression_predict():
     df = linearRegressionClass.preprocess(df,int(userID),"predict")
     preds = linearRegressionClass.predict(df,hrs,userID)    
     response=preds  
-    # print("R2:",r2_score)
-    #output = {"csv":response.to_csv(index=False), "R2":r2_score} 
-    #output = {"csv":response.to_csv(index=False)}  
-    #print(output["csv"])  
-    #print(type(output["csv"])) 
     return response.to_csv(index=False)
-    # return json.dumps(output)   
 
 # Random Forest
 

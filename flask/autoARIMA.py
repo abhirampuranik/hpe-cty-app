@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import pickle
-from sklearn.metrics import r2_score
+from sklearn.metrics import r2_score, mean_squared_error
 from pmdarima.arima import auto_arima
 # test['predicted sales'] = prediction
 # r2_score(test[' Champagne sales'], test['predicted sales'])
@@ -45,8 +45,9 @@ class AutoArima:
         prediction = self.predict(test,userID)
         self.update(test,userID)
         test['predicted Usage'] = prediction
-        acc = r2_score(test['Usage'], test['predicted Usage'])
-        return str(acc*100)+"%"
+        acc = mean_squared_error(test['Usage'], test['predicted Usage'])
+        print(acc)
+        return round(acc, 2)
 
     def predict(self,test, userID):
         test_size = len(test)

@@ -189,6 +189,7 @@ export default function HomePage() {
                 })
                 .then(function (response) { 
                     console.log(response.data);
+                    setR2(response.data.R2);
                     setProcessing(false);
                     setProcessed(true);
                     setOpen({open:true});
@@ -309,6 +310,7 @@ export default function HomePage() {
                 } )
                 .then(function (response) { 
                     console.log(response.data);
+                    setR2(response.data.R2);
                     setProcessing(false);
                     setProcessed(true);
                     setOpen({open:true});
@@ -327,7 +329,6 @@ export default function HomePage() {
                 .then(function (response) { 
                     console.log(response.data);
                     setoutputArray1(response.data.csv.split('\n'));
-                    setR2(response.data.R2);
                     setProcessing(false);
                     setProcessed(true);
                 })
@@ -482,6 +483,12 @@ export default function HomePage() {
                             sendCSV(e);
                         }}
                         >Send File</Button>
+                </div>:<span></span>
+            }
+
+            {processed && (model === 'autoarima' || model === 'rnn' || model === 'linearregression') && action === 'train'? 
+                <div>
+                    <h3>R2 score of model: {r2}</h3>
                 </div>:<span></span>
             }
 
