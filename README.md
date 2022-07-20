@@ -40,6 +40,6 @@ npm start
 ### Flask backend
 ``` 
 Create new environment(preferable)
-pip install requirements.txt
+pip install -r requirements.txt
 flask run
 ```

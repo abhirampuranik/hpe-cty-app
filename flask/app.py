@@ -4,7 +4,6 @@ import os
 import json
 from urllib import request
 import pandas as pd
-# from sqlalchemy import false
 from autoARIMA import AutoArima
 from linearRegression import linearRegressionClass
 from randomForest import randomForestClass

@@ -274,6 +274,7 @@ export default function HomePage() {
                 })
                 .then(function (response) { 
                     console.log(response.data);
+                    setR2(response.data.R2);
                     setProcessing(false);
                     setProcessed(true);
                     setOpen({open:true});
@@ -328,7 +329,7 @@ export default function HomePage() {
                 } )
                 .then(function (response) { 
                     console.log(response.data);
-                    setoutputArray1(response.data.csv.split('\n'));
+                    setoutputArray1(response.data.split('\n'));
                     setProcessing(false);
                     setProcessed(true);
                 })
@@ -486,7 +487,7 @@ export default function HomePage() {
                 </div>:<span></span>
             }
 
-            {processed && (model === 'autoarima' || model === 'rnn' || model === 'linearregression') && action === 'train'? 
+            {processed && action === 'train'? 
                 <div>
                     <h3>R2 score of model: {r2}</h3>
                 </div>:<span></span>
@@ -542,7 +543,7 @@ export default function HomePage() {
             
             
             {action === 'predict' && (model === 'autoarima' || model === 'linearregression' || model === 'rnn' || model === 'prophet') && processed?
-                <div><ChartGraph List={List1} color={"#fbf6a7"} title={"Storage Forecast consumption (in MB)"}/><h2>{r2}</h2></div>:<span></span>}
+                <div><ChartGraph List={List1} color={"#fbf6a7"} title={"Storage Forecast consumption (in MB)"}/></div>:<span></span>}
 
         </div>
     );
