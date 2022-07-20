@@ -13,7 +13,7 @@ from multinomialNaiveBayes import MultinomialNaiveBayesClass
 from dateGen import DateGen
 from dateGenML import DateGenML
 from DateGenP import DateGenP
-# from rnn import Rnn
+from rnn import Rnn
 from flask import Flask, flash, request, redirect, url_for, session, Response
 from flask_cors import CORS
 from flasgger import Swagger

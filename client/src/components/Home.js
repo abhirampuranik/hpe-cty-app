@@ -359,7 +359,6 @@ export default function HomePage() {
                     onChange={handleChangeOnModel}
                     >
                     <MenuItem value={'autoarima'}>AutoArima</MenuItem>
-                    <MenuItem value={'prophet'}>Prophet</MenuItem>
                     <MenuItem value={'rnn'}>RNN</MenuItem>
                     <MenuItem value={'linearregression'}>Linear Regression</MenuItem>
                     </Select>
@@ -487,7 +486,7 @@ export default function HomePage() {
                 </div>:<span></span>
             }
 
-            {processed && action === 'train'? 
+            {processed && action === 'train' && model !== 'autoarima'? 
                 <div>
                     <h3>R2 score of model: {r2}</h3>
                 </div>:<span></span>

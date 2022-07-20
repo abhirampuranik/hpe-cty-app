@@ -45,9 +45,9 @@ class AutoArima:
         prediction = self.predict(test,userID)
         self.update(test,userID)
         test['predicted Usage'] = prediction
-        acc = mean_squared_error(test['Usage'], test['predicted Usage'])
+        acc = r2_score(test['Usage'], test['predicted Usage'])
         print(acc)
-        return round(acc, 2)
+        return acc
 
     def predict(self,test, userID):
         test_size = len(test)
