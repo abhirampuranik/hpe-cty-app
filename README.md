@@ -15,7 +15,6 @@ Storage consumption prediction in real-time : Model trains in real time while gi
 - Material UI
 
 ### Backend(Python) Libraries
-- fbprophet==0.7.1
 - Flask_Cors==3.0.10
 - flask_restful==0.3.9
 - matplotlib==3.5.1
@@ -23,9 +22,7 @@ Storage consumption prediction in real-time : Model trains in real time while gi
 - pandas==1.3.2
 - pmdarima==1.8.5
 - scikit_learn==1.1.1
-- SQLAlchemy==1.4.27
 - tensorflow==2.9.1
-- Werkzeug==2.0.1
 - xgboost==1.6.1
 
 
@@ -39,7 +36,7 @@ npm start
 
 ### Flask backend
 ``` 
-Create new environment(preferable)
+Create new environment(preferable, For conda: conda create --name myenv, conda activate myenv)
 pip install -r requirements.txt
 flask run
 ```
