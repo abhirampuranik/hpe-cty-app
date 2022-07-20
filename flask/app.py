@@ -201,7 +201,7 @@ def autoarima_predict():
               type: integer
             userID:
               type: string
-        example: {"days": 2,"hours":5,"userID": 1}
+        example: {"days": 2,"hours":5,"userID": "1"}
     responses:
       200:
         description: Status

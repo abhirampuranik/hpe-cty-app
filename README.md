@@ -1,10 +1,45 @@
 # hpe-cty-app
-Full stack app
 
 # Predicting cloud storage consumption using time-series analysis
 
-Application uses time-series based data for prediction of future trend
+Application uses time-series based data for prediction of future trend of storage consumption
 
-Application uses machine learning algorithms for prediction
+Forecast trends for the specified time interval in the future on the trained model
 
-Application forecasts the trend for the specified time interval
+Storage consumption prediction in real-time : Model trains in real time while giving future prediction 
+
+### Client Libraries
+- ReactJS
+- Axios
+- React-google-charts
+- Material UI
+
+### Backend(Python) Libraries
+- fbprophet==0.7.1
+- Flask_Cors==3.0.10
+- flask_restful==0.3.9
+- matplotlib==3.5.1
+- numpy==1.21.2
+- pandas==1.3.2
+- pmdarima==1.8.5
+- scikit_learn==1.1.1
+- SQLAlchemy==1.4.27
+- tensorflow==2.9.1
+- Werkzeug==2.0.1
+- xgboost==1.6.1
+
+
+### Steps to run
+#### Client
+``` 
+cd client
+npm install
+npm start
+```
+
+### Flask backend
+``` 
+Create new environment(preferable)
+pip install requirements.txt
+flask run
+```
