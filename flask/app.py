@@ -14,7 +14,7 @@ from multinomialNaiveBayes import MultinomialNaiveBayesClass
 from dateGen import DateGen
 from dateGenML import DateGenML
 from DateGenP import DateGenP
-from rnn import Rnn
+# from rnn import Rnn
 from flask import Flask, flash, request, redirect, url_for, session, Response
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
@@ -81,6 +81,23 @@ def dataLinearReg():
 
 @app.route('/stream',methods=['GET'])
 def stream():
+    """ Streaming from storage simulation
+    ---
+
+    responses:
+      200:
+        description: Server Running
+        schema:
+          type: object
+          properties:
+            resultStatus:
+              type: string
+            message:
+              type: string
+          examples:
+            resultStatus: SUCCESS
+            message: Flask Running
+    """
     df = pd.read_csv("storage_train.csv")
     aa = AutoArima()
     df_prep = aa.preprocess(df,1)
@@ -97,7 +114,7 @@ def stream():
             s = final_df.to_csv().replace('\r\n', '$')
             #gotcha
             yield f'data: {s} \n\n' 
-            time.sleep(1)
+            time.sleep(5)
             
     response = Response(getdata(), mimetype='text/event-stream')
 
@@ -193,15 +210,18 @@ def autoarima_predict():
         description: "Accepts a input dictionary of Time and User ID"
         required: true
         schema:
-          type: json
+          type: object
           properties:
-            days:
-              type: integer
-            hours:
-              type: integer
-            userID:
-              type: string
-        example: {"days": 2,"hours":5,"userID": "1"}
+            body:
+              type: object
+              properties:
+                days:
+                  type: integer
+                hours:
+                  type: integer
+                userID:
+                  type: string
+        example: {"days": 2,"hours":5,"userID": 1}
     responses:
       200:
         description: Status
@@ -273,14 +293,17 @@ def linearRegression_predict():
           description: "Accepts a input dictionary of Time and User ID"
           required: true
           schema:
-            type: json
+            type: object
             properties:
-              days:
-                type: integer
-              hours:
-                type: integer
-              userID:
-                type: string
+              body:
+                type: object
+                properties:
+                  days:
+                    type: integer
+                  hours:
+                    type: integer
+                  userID:
+                    type: string
           example: {"days": 2,"hours":5,"userID": 1}
       responses:
         200:
@@ -372,7 +395,6 @@ def multinomialNaiveBayes_predict():
     df = pd.read_csv(file)
     df = MultinomialNaiveBayesClass.preprocess(df)
     preds = MultinomialNaiveBayesClass.predict(df[:50])
-    # print(preds)
     response=preds
     return response.to_csv()
 
