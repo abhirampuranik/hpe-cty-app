@@ -46,7 +46,7 @@ class AutoArima:
         self.update(test,userID)
         test['predicted Usage'] = prediction
         acc = r2_score(test['Usage'], test['predicted Usage'])
-        return r2_score
+        return str(acc*100)+"%"
 
     def predict(self,test, userID):
         test_size = len(test)

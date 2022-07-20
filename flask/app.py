@@ -4,6 +4,7 @@ import os
 import json
 from urllib import request
 import pandas as pd
+from pydantic import Json
 # from sqlalchemy import false
 from autoARIMA import AutoArima
 from linearRegression import linearRegressionClass
@@ -157,8 +158,8 @@ def autoarima_train():
     userID = int(request.form['userID'])
     df = pd.read_csv(file)
     df = aa.preprocess(df,userID)
-    aa.train(df, userID)
-    return "Model Trained Successfully"
+    r2_score = aa.train(df, userID)
+    return json.dumps({"message":"Model Trained Successfully", "R2":r2_score})
 
 @app.route('/autoarima/update',methods=['POST'])
 def autoarima_update():
