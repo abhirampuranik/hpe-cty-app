@@ -13,7 +13,7 @@ from multinomialNaiveBayes import MultinomialNaiveBayesClass
 from dateGen import DateGen
 from dateGenML import DateGenML
 from DateGenP import DateGenP
-from rnn import Rnn
+# from rnn import Rnn
 from flask import Flask, flash, request, redirect, url_for, session, Response
 from flask_cors import CORS
 from flasgger import Swagger
@@ -268,7 +268,6 @@ def linearRegression_train():
           type: string
         examples:
           result: Model Trained Successfully
-          
     """
     file = request.files['file']
     userID = int(request.form['userID'])
@@ -458,6 +457,31 @@ def prophet_predict():
 
 @app.route('/rnn/train',methods=['POST'])
 def rnn_train():
+    """ Training RNN model with Storage dataset  
+      ---
+      consumes:
+        - "multipart/form-data"
+      produces:
+        - "string"
+      parameters:
+        - in: formData
+          name: file
+          description: Storage dataset
+          required: true
+          type: file
+        - in: formData
+          name: userID
+          description: User ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Status
+          schema:
+            type: string
+          examples:
+            result: Model Trained Successfully
+      """
     file = request.files['file']
     userID = int(request.form['userID'])
     df = pd.read_csv(file)    
@@ -468,6 +492,45 @@ def rnn_train():
 
 @app.route('/rnn/predict',methods=['POST'])
 def rnn_predict():
+    """ Future Predictions 
+        ---
+        consumes:
+          - "application/json"
+        produces:
+          - "application/json"
+        parameters:
+          - in: "body"
+            name: "body"
+            description: "Accepts a input dictionary of Time and User ID"
+            required: true
+            schema:
+              type: object
+              properties:
+                body:
+                  type: object
+                  properties:
+                    days:
+                      type: integer
+                    hours:
+                      type: integer
+                    userID:
+                      type: string
+            example: {"days": 2,"hours":5,"userID": 1}
+        responses:
+          200:
+            description: Status
+            schema:
+              type: object
+              properties:
+                days:
+                  type: integer
+                hours:
+                  type: integer
+                userID:
+                  type: string
+            examples:
+              result: {"days": 2,"hours":5,"userID": 1}
+        """
     days = request.json['body']['days']
     hours = request.json['body']['hours']
     userID = request.json['body']['userID']
