@@ -463,9 +463,10 @@ def rnn_train():
     file = request.files['file']
     userID = int(request.form['userID'])
     df = pd.read_csv(file)    
-    df = Rnn.preprocess(df,userID,"train")
-    Rnn.train(df,userID)
-    return "Model Trained Successfully" 
+    df = Rnn.preprocess(df,userID,"train")    
+    r2_score = Rnn.train(df,userID)  
+    return json.dumps({"message":"Model Trained Successfully", "R2":r2_score})  
+
 
 @app.route('/rnn/predict',methods=['POST'])
 def rnn_predict():
@@ -475,15 +476,11 @@ def rnn_predict():
 
     df = pd.read_csv('RNN_Predict.csv')
     hrs=int(days)*24 + int(hours)
-    df = Rnn.preprocess(df,int(userID),"predict")
-    # preds, r2_score = Rnn.predict(df,hrs,userID) 
+    df = Rnn.preprocess(df,int(userID),"predict")    
     preds = Rnn.predict(df,hrs,userID)  
-    response=preds
-    #print("response",response)
-    #print("R2:",r2_score)
-    #output = {"csv":response.to_csv(index=False), "R2":r2_score}
+    response=preds    
     return response.to_csv(index=False)   
-    #return output
+   
 
 @app.route('/liststorages')
 def list_storages():
