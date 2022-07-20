@@ -36,7 +36,7 @@ class Rnn:
     def train(df,userID):       
       test_point = -769      
       train = df.iloc[:test_point]
-      test = df.iloc[test_point:test_point+10]      
+      test = df.iloc[test_point:test_point+7]      
       scaler = MinMaxScaler()
       scaler.fit(train)
       scaled_train = scaler.transform(train)
@@ -77,7 +77,7 @@ class Rnn:
       # print(test)        
 
       acc = r2_score(test['Usage'], true_predictions)
-      print(str(acc*100)+"%")
+      print(str(abs(acc)*100)+"%")
       return str(abs(acc)*100)+"%"
       
     def predict(df,hrs,userID): 
