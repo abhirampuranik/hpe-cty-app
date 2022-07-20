@@ -15,7 +15,6 @@ from dateGenML import DateGenML
 from DateGenP import DateGenP
 from rnn import Rnn
 from flask import Flask, flash, request, redirect, url_for, session, Response
-from werkzeug.utils import secure_filename
 from flask_cors import CORS
 from flasgger import Swagger
 
